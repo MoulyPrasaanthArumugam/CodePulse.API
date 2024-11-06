@@ -11,14 +11,15 @@ namespace CodePulse.API.Repositories.Implementations
     {
         private readonly IConfiguration configuration;
 
-        public TokenRepository(IConfiguration configuration)
+        public TokenRepository(IConfiguration configuration)  //Iconfiguration is used to read the appsettings value for JWT Token Creation
         {
             this.configuration = configuration;
         }
 
+        //In this method we create JWTToken
         public string CreateJwtToken(IdentityUser user, List<string> roles)
         {
-            // Create Claims
+            // Create Claims for token by using EMail & Role
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Email, user.Email)
@@ -26,11 +27,13 @@ namespace CodePulse.API.Repositories.Implementations
 
             claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-            // JWT Security Token Parameters
+            // Getting key from Appsetting
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
 
+            //Signing the Key to make it as unique credential
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
+            //Setting the token
             var token = new JwtSecurityToken(
                 issuer: configuration["Jwt:Issuer"],
                 audience: configuration["Jwt:Audience"],

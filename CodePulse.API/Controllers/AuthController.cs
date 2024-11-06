@@ -70,12 +70,12 @@ namespace CodePulse.API.Controllers
             };
 
             // Create User
-            var identityResult = await userManager.CreateAsync(user, request.Password);
+            var identityResult = await userManager.CreateAsync(user, request.Password);  //UserManager class is from Identity which is used to create User
 
             if (identityResult.Succeeded)
             {
                 // Add Role to user (Reader)
-                identityResult = await userManager.AddToRoleAsync(user, "Reader");
+                identityResult = await userManager.AddToRoleAsync(user, "Reader"); ////UserManager class is from Identity which is used to assign role to user
 
                 if (identityResult.Succeeded)
                 {

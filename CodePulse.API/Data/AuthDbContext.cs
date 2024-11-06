@@ -1,17 +1,19 @@
 ﻿
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.Build.Framework;
 using Microsoft.EntityFrameworkCore;
 
 namespace CodePulse.API.Data
 {
-    public class AuthDbContext:IdentityDbContext
+    public class AuthDbContext: IdentityDbContext  //Inheriting IdentityDbContext from Identity.EntityFrameworkCore
     {
 
         public AuthDbContext(DbContextOptions<AuthDbContext> options): base(options) 
         {
         }
 
+        //Used to Define Roles
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -36,7 +38,7 @@ namespace CodePulse.API.Data
                  }
              };
 
-            //Seed the Roles
+            //Seed the Roles (It makes sures to seed the roles into role table when we run migration)
             builder.Entity<IdentityRole>().HasData(roles);
 
             //Create an Admin User
