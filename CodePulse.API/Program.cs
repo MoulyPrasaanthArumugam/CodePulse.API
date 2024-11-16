@@ -12,11 +12,12 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
 //Setting Authorize option in Swagger UI
 builder.Services.AddSwaggerGen(Options=>
 {
@@ -43,6 +44,8 @@ builder.Services.AddSwaggerGen(Options=>
         }
     });
 });
+
+//Handled ApplicationDBContext and AuthDBContext seperately
 builder.Services.AddDbContext<ApplicationDBContext>(Options =>
 {
     Options.UseSqlServer(builder.Configuration.GetConnectionString("CodePulseConnectionString"));
@@ -53,6 +56,7 @@ builder.Services.AddDbContext<AuthDbContext>(Options =>
     Options.UseSqlServer(builder.Configuration.GetConnectionString("CodePulseConnectionString"));
 });
 
+//Configuring Repository Implementations
 builder.Services.AddScoped<ICategoryRepository,CategoryRepository>();
 builder.Services.AddScoped<IBlogPostRepository,BlogPostRepository>();
 builder.Services.AddScoped<IImageRepository,ImageRepository>();
@@ -112,8 +116,8 @@ app.UseCors(options =>
 }
 );
 
-app.UseAuthentication();
-app.UseAuthorization();
+app.UseAuthentication();  //Setting Authentication to Pipeline
+app.UseAuthorization();   //Setting Authorization to Pipeline
 
 //Provides Static images for localhost url
 app.UseStaticFiles(new StaticFileOptions
