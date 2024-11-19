@@ -12,32 +12,32 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CodePulse.API.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20240605030716_Adding BlogImage")]
-    partial class AddingBlogImage
+    [Migration("20241118173555_EstablishingGenreAndCategoryRelationship")]
+    partial class EstablishingGenreAndCategoryRelationship
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.4")
+                .HasAnnotation("ProductVersion", "8.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("BlogSpotCategory", b =>
+            modelBuilder.Entity("BlogSpotGenre", b =>
                 {
-                    b.Property<Guid>("blogSpotsId")
+                    b.Property<Guid>("BlogsId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("categoriesId")
+                    b.Property<Guid>("GenresId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("blogSpotsId", "categoriesId");
+                    b.HasKey("BlogsId", "GenresId");
 
-                    b.HasIndex("categoriesId");
+                    b.HasIndex("GenresId");
 
-                    b.ToTable("BlogSpotCategory");
+                    b.ToTable("BlogSpotGenre");
                 });
 
             modelBuilder.Entity("CodePulse.API.Model.Domain.BlogImage", b =>
@@ -117,6 +117,9 @@ namespace CodePulse.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("BlogSpotId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -127,22 +130,70 @@ namespace CodePulse.API.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BlogSpotId");
+
                     b.ToTable("Category");
                 });
 
-            modelBuilder.Entity("BlogSpotCategory", b =>
+            modelBuilder.Entity("CodePulse.API.Model.Domain.Genre", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Genre");
+                });
+
+            modelBuilder.Entity("CodePulse.API.Model.Domain.WatchList", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ContentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WatchList");
+                });
+
+            modelBuilder.Entity("BlogSpotGenre", b =>
                 {
                     b.HasOne("CodePulse.API.Model.Domain.BlogSpot", null)
                         .WithMany()
-                        .HasForeignKey("blogSpotsId")
+                        .HasForeignKey("BlogsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CodePulse.API.Model.Domain.Category", null)
+                    b.HasOne("CodePulse.API.Model.Domain.Genre", null)
                         .WithMany()
-                        .HasForeignKey("categoriesId")
+                        .HasForeignKey("GenresId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("CodePulse.API.Model.Domain.Category", b =>
+                {
+                    b.HasOne("CodePulse.API.Model.Domain.BlogSpot", null)
+                        .WithMany("categories")
+                        .HasForeignKey("BlogSpotId");
+                });
+
+            modelBuilder.Entity("CodePulse.API.Model.Domain.BlogSpot", b =>
+                {
+                    b.Navigation("categories");
                 });
 #pragma warning restore 612, 618
         }

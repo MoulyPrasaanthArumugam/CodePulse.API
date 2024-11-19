@@ -159,15 +159,15 @@ namespace CodePulse.API.Migrations.AuthDb
                         {
                             Id = "a226da08-f00d-4f81-bbfe-3e119fe5c613",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "caa88429-7505-436a-9c95-6a4f3ff90587",
+                            ConcurrencyStamp = "0bc6b19f-e729-4f8b-a0a7-87fff7195103",
                             Email = "admin@codepulse.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@CODEPULSE.COM",
                             NormalizedUserName = "ADMIN@CODEPULSE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAENem8Y5xY/Ot8wfrA88TVH8qCCiAsjv0PTauGtUuSvJKbxoCtp6L6UdoE/5LLdNrSQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEA8Bm3+xsoVFbzGqoAsNWfQRD1J1EPTURO235azzkHoSsNJrygFhsLfZSMq2v7ZtYg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "096cea72-2d78-405e-99bd-ec0b282a446c",
+                            SecurityStamp = "7084aea9-7aca-4e3d-95fb-06efcc3490c0",
                             TwoFactorEnabled = false,
                             UserName = "admin@codepulse.com"
                         });

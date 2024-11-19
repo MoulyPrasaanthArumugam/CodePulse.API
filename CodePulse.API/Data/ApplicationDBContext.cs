@@ -12,9 +12,11 @@ namespace CodePulse.API.Data
         {
         }
 
-        public DbSet<BlogSpot>BlogSpot { get; set; }
+        public DbSet<Content>Contents { get; set; }
         public DbSet<Category> Category { get; set; }
         public DbSet<BlogImage> BlogImages { get; set; }
+        public DbSet<Genre> Genre { get; set; }
 
+        public DbSet<WatchList> WatchList { get; set; }
     }
 }

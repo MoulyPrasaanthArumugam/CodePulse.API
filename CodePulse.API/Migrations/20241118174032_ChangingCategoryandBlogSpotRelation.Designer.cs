@@ -4,6 +4,7 @@ using CodePulse.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CodePulse.API.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20241118174032_ChangingCategoryandBlogSpotRelation")]
+    partial class ChangingCategoryandBlogSpotRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,21 @@ namespace CodePulse.API.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("BlogSpotGenre", b =>
+                {
+                    b.Property<Guid>("BlogsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("GenresId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("BlogsId", "GenresId");
+
+                    b.HasIndex("GenresId");
+
+                    b.ToTable("BlogSpotGenre");
+                });
 
             modelBuilder.Entity("CodePulse.API.Model.Domain.BlogImage", b =>
                 {
@@ -52,6 +70,52 @@ namespace CodePulse.API.Migrations
                     b.ToTable("BlogImages");
                 });
 
+            modelBuilder.Entity("CodePulse.API.Model.Domain.BlogSpot", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Author")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("CategoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FeaturedImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("PublishedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UrlHandle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("BlogSpot");
+                });
+
             modelBuilder.Entity("CodePulse.API.Model.Domain.Category", b =>
                 {
                     b.Property<Guid>("Id")
@@ -62,56 +126,13 @@ namespace CodePulse.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UrlHandle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Category");
-                });
-
-            modelBuilder.Entity("CodePulse.API.Model.Domain.Content", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CategoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("DislikeCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("FeaturedImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Info")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsExpired")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("LikeCount")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("PublishedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("RentalDuration")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("Contents");
                 });
 
             modelBuilder.Entity("CodePulse.API.Model.Domain.Genre", b =>
@@ -148,37 +169,11 @@ namespace CodePulse.API.Migrations
                     b.ToTable("WatchList");
                 });
 
-            modelBuilder.Entity("ContentGenre", b =>
+            modelBuilder.Entity("BlogSpotGenre", b =>
                 {
-                    b.Property<Guid>("ContentsId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("GenresId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ContentsId", "GenresId");
-
-                    b.HasIndex("GenresId");
-
-                    b.ToTable("ContentGenre");
-                });
-
-            modelBuilder.Entity("CodePulse.API.Model.Domain.Content", b =>
-                {
-                    b.HasOne("CodePulse.API.Model.Domain.Category", "Category")
-                        .WithMany("Contents")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("ContentGenre", b =>
-                {
-                    b.HasOne("CodePulse.API.Model.Domain.Content", null)
+                    b.HasOne("CodePulse.API.Model.Domain.BlogSpot", null)
                         .WithMany()
-                        .HasForeignKey("ContentsId")
+                        .HasForeignKey("BlogsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -189,9 +184,16 @@ namespace CodePulse.API.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("CodePulse.API.Model.Domain.BlogSpot", b =>
+                {
+                    b.HasOne("CodePulse.API.Model.Domain.Category", null)
+                        .WithMany("blogSpots")
+                        .HasForeignKey("CategoryId");
+                });
+
             modelBuilder.Entity("CodePulse.API.Model.Domain.Category", b =>
                 {
-                    b.Navigation("Contents");
+                    b.Navigation("blogSpots");
                 });
 #pragma warning restore 612, 618
         }

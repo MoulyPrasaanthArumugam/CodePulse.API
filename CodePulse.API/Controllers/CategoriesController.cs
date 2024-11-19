@@ -26,18 +26,17 @@ namespace CodePulse.API.Controllers
             this.categoryRepository = categoryRepository;
         }
 
-        
+
         // POST: api/Categories
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [Authorize(Roles = "Writer")]
+        //[Authorize(Roles = "Writer")]
         public async Task<IActionResult> SaveCategory(CreateCategoryDTO request)
         {
             //Map DTO to Domain Model 
             var category = new Category()
             {
-                Name = request.Name,
-                UrlHandle = request.UrlHandle
+                Name = request.Name
             };
 
             await categoryRepository.CreateCategoryAsynch(category);
@@ -46,19 +45,15 @@ namespace CodePulse.API.Controllers
             var response = new CategoryDTO()
             {
                 Id = category.Id,
-                Name = request.Name,
-                UrlHandle = request.UrlHandle
+                Name = request.Name
             };
-          return Ok(response);
+            return Ok(response);
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllCategoryAsynch([FromQuery] string? query,
-            [FromQuery] string? sortBy,
-            [FromQuery] string? sortDirection, [FromQuery] int? pageNumber,
-            [FromQuery] int? pageSize)
+        public async Task<IActionResult> GetAllCategoryAsynch()
         {
-            var categories = await categoryRepository.GetAllCategoriesAsynch(query,sortBy,sortDirection, pageNumber, pageSize);
+            var categories = await categoryRepository.GetAllCategoriesAsynch();
 
             var response = new List<CategoryDTO>();
             //Map Domain Model to DTO
@@ -67,12 +62,33 @@ namespace CodePulse.API.Controllers
                 response.Add(new CategoryDTO
                 {
                     Id = category.Id,
-                    Name = category.Name,
-                    UrlHandle = category.UrlHandle
+                    Name = category.Name
                 });
             }
             return Ok(response);
         }
+
+        //[HttpGet]
+        //public async Task<IActionResult> GetAllCategoryAsynch([FromQuery] string? query,
+        //    [FromQuery] string? sortBy,
+        //    [FromQuery] string? sortDirection, [FromQuery] int? pageNumber,
+        //    [FromQuery] int? pageSize)
+        //{
+        //    var categories = await categoryRepository.GetAllCategoriesAsynch(query,sortBy,sortDirection, pageNumber, pageSize);
+
+        //    var response = new List<CategoryDTO>();
+        //    //Map Domain Model to DTO
+        //    foreach (var category in categories)
+        //    {
+        //        response.Add(new CategoryDTO
+        //        {
+        //            Id = category.Id,
+        //            Name = category.Name,
+        //            UrlHandle = category.UrlHandle
+        //        });
+        //    }
+        //    return Ok(response);
+        //}
 
         [HttpGet]
         [Route("{id:Guid}")]
@@ -87,22 +103,20 @@ namespace CodePulse.API.Controllers
             var response = new CategoryDTO()
             {
                 Id = category.Id,
-                Name = category.Name,
-                UrlHandle = category.UrlHandle
+                Name = category.Name
             };
             return Ok(response);
         }
 
         [HttpPut]
         [Route("{id:Guid}")]
-        [Authorize(Roles = "Writer")]
+        //[Authorize(Roles = "Writer")]
         public async Task<IActionResult> EditCategory([FromRoute] Guid id, UpdateCategoryDTO request)
         {
             var catrgory = new Category()
             {
                 Id = id,
-                Name = request.Name,
-                UrlHandle = request.UrlHandle
+                Name = request.Name
             };
             catrgory = await categoryRepository.UpdateAsynch(catrgory);
 
@@ -115,15 +129,14 @@ namespace CodePulse.API.Controllers
             var response = new CategoryDTO()
             {
                 Id = catrgory.Id,
-                Name = catrgory.Name,
-                UrlHandle = catrgory.UrlHandle
+                Name = catrgory.Name
             };
             return Ok(response);
         }
 
         [HttpDelete]
         [Route("{id:Guid}")]
-        [Authorize(Roles = "Writer")]
+        //[Authorize(Roles = "Writer")]
         public async Task<IActionResult> DeleteCategory([FromRoute] Guid id)
         {
             var category = await categoryRepository.DeleteAsync(id);
@@ -134,21 +147,20 @@ namespace CodePulse.API.Controllers
             var response = new CategoryDTO()
             {
                 Id = category.Id,
-                Name = category.Name,
-                UrlHandle = category.UrlHandle
+                Name = category.Name
             };
             return Ok(response);
         }
 
-        // GET: https://localhost:7226/api/categories/count
-        [HttpGet]
-        [Route("count")]
-        //[Authorize(Roles = "Writer")]
-        public async Task<IActionResult> GetCategoriesTotal()
-        {
-            var count = await categoryRepository.GetCount();
+        //// GET: https://localhost:7226/api/categories/count
+        //[HttpGet]
+        //[Route("count")]
+        ////[Authorize(Roles = "Writer")]
+        //public async Task<IActionResult> GetCategoriesTotal()
+        //{
+        //    var count = await categoryRepository.GetCount();
 
-            return Ok(count);
-        }
+        //    return Ok(count);
+        //}
     }
 }

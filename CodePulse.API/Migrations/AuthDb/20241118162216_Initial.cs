@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CodePulse.API.Migrations.AuthDb
 {
     /// <inheritdoc />
-    public partial class IntiateAuth : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -170,7 +170,7 @@ namespace CodePulse.API.Migrations.AuthDb
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "a226da08-f00d-4f81-bbfe-3e119fe5c613", 0, "caa88429-7505-436a-9c95-6a4f3ff90587", "admin@codepulse.com", false, false, null, "ADMIN@CODEPULSE.COM", "ADMIN@CODEPULSE.COM", "AQAAAAIAAYagAAAAENem8Y5xY/Ot8wfrA88TVH8qCCiAsjv0PTauGtUuSvJKbxoCtp6L6UdoE/5LLdNrSQ==", null, false, "096cea72-2d78-405e-99bd-ec0b282a446c", false, "admin@codepulse.com" });
+                values: new object[] { "a226da08-f00d-4f81-bbfe-3e119fe5c613", 0, "0bc6b19f-e729-4f8b-a0a7-87fff7195103", "admin@codepulse.com", false, false, null, "ADMIN@CODEPULSE.COM", "ADMIN@CODEPULSE.COM", "AQAAAAIAAYagAAAAEA8Bm3+xsoVFbzGqoAsNWfQRD1J1EPTURO235azzkHoSsNJrygFhsLfZSMq2v7ZtYg==", null, false, "7084aea9-7aca-4e3d-95fb-06efcc3490c0", false, "admin@codepulse.com" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",

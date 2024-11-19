@@ -58,8 +58,9 @@ builder.Services.AddDbContext<AuthDbContext>(Options =>
 
 //Configuring Repository Implementations
 builder.Services.AddScoped<ICategoryRepository,CategoryRepository>();
-builder.Services.AddScoped<IBlogPostRepository,BlogPostRepository>();
+builder.Services.AddScoped<IContentRepository,ContentRepository>();
 builder.Services.AddScoped<IImageRepository,ImageRepository>();
+builder.Services.AddScoped<IGenreRepository, GenreRepository>();
 builder.Services.AddScoped<ITokenRepository,TokenRepository>();
 
 //Configuring what kind of User and roles to use
