@@ -2,6 +2,7 @@
 using CodePulse.API.Model.Domain;
 using CodePulse.API.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration.UserSecrets;
 
 namespace CodePulse.API.Repositories.Implementations
 {
@@ -21,7 +22,36 @@ namespace CodePulse.API.Repositories.Implementations
             return content;
         }
 
+        public async Task<Like?> AddLikeAsync(Like like)
+        {
+            var liked = await dbContext.Like.FirstOrDefaultAsync(x => x.UserId == like.UserId && x.ContentId == like.ContentId);
 
+            if (like == null)
+            {
+                dbContext.Like.Add(new Like { UserId = like.UserId, ContentId = like.ContentId });
+                var content = await dbContext.Contents.FindAsync(like.ContentId);
+                content.LikeCount = (content.LikeCount ?? 0) + 1;
+                await dbContext.SaveChangesAsync();
+                return like;
+            }
+            return null;
+
+        }
+
+        public async Task<DisLike?> AddDisLikeAsync(DisLike disLike)
+        {
+            var disLiked = await dbContext.Dislike.FirstOrDefaultAsync(x => x.UserId == disLike.UserId && x.ContentId == disLike.ContentId);
+
+            if (disLiked == null)
+            {
+                dbContext.Like.Add(new Like { UserId = disLike.UserId, ContentId = disLike.ContentId });
+                var content = await dbContext.Contents.FindAsync(disLike.ContentId);
+                content.DislikeCount = (content.DislikeCount ?? 0) + 1;
+                await dbContext.SaveChangesAsync();
+                return disLike;
+            }
+            return null;
+        }
 
         public async Task<IEnumerable<Content>> GetAllAsync()
         {
@@ -34,10 +64,30 @@ namespace CodePulse.API.Repositories.Implementations
 
         }
 
-        //public async Task<BlogSpot?> GetByUrlHandleAsync(string urlHandle)
-        //{
-        //    return await dbContext.BlogSpot.Include(x => x.categories).FirstOrDefaultAsync(x => x.UrlHandle == urlHandle);
-        //}
+        public async Task<IEnumerable< Content?>> GetByGenreAsync(Guid genreId)
+        {
+            var items = await dbContext.Contents
+                         .Include(x => x.Genres)
+                         .Where(x => x.Genres.Any(g => g.Id == genreId))
+                         .ToListAsync();
+            return items;
+        }
+
+        public async Task<IEnumerable<Content?>> GetByCategoryAsync(Guid categoryId)
+        {
+            var items = await dbContext.Contents
+                         .Include( x => x.Genres)
+                         .Where(x => x.CategoryId == categoryId)
+                         .ToListAsync();
+            return items;
+        }
+
+
+        public async Task<IEnumerable<Content>> GetByLikesAsync()
+        {
+            return await dbContext.Contents.OrderByDescending(x => x.LikeCount ?? 0).Take(10).ToListAsync();
+        }
+
 
         public async Task<Content?> UpdateAsync(Content content)
         {

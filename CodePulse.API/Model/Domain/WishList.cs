@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
-
-namespace CodePulse.API.Model.Domain
+﻿namespace CodePulse.API.Model.Domain
 {
-    public class Watchlist
+    public class WishList
     {
         public Guid Id { get; set; }
         public string UserId { get; set; } // Foreign key to IdentityUser

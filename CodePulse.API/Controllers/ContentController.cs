@@ -79,6 +79,42 @@ namespace CodePulse.API.Controllers
             return Ok(response);
         }
 
+        // POST: {apibaseurl}/api/Like
+        [HttpPost]
+        [Route("/like")]
+        //[Authorize(Roles = "Writer")]
+        public async Task<IActionResult> AddLike([FromBody] LikeDTO request)
+        {
+            // Convert DTO to DOmain
+            var content = new Like
+            {
+               UserId = request.UserId,
+               ContentId = request.ContentId,
+            };
+
+             await contentRepository.AddLikeAsync(content);            
+
+            return Ok("Liked");
+        }
+
+        // POST: {apibaseurl}/api/Dislike
+        [HttpPost]
+        [Route("/Dislike")]
+        //[Authorize(Roles = "Writer")]
+        public async Task<IActionResult> AddDisLike([FromBody] DisLikeDTO request)
+        {
+            // Convert DTO to DOmain
+            var content = new DisLike
+            {
+                UserId = request.UserId,
+                ContentId = request.ContentId,
+            };
+
+            await contentRepository.AddDisLikeAsync(content);
+
+            return Ok("DisLiked");
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAllContents()
         {
@@ -152,41 +188,80 @@ namespace CodePulse.API.Controllers
         }
 
 
-        //// GET: {apibaseurl}/api/blogPosts/{urlhandle}
-        //[HttpGet]
-        //[Route("{urlHandle}")]
-        //public async Task<IActionResult> GetBlogPostByUrlHandle([FromRoute] string urlHandle)
-        //{
-        //    // Get blogpost details from repository
-        //    var blogPost = await blogPostRepository.GetByUrlHandleAsync(urlHandle);
+        [HttpGet]
+        [Route("/GenreWise")]
+        public async Task<IActionResult> GetContentsByGenre( Guid genreId)
+        {
+            var contents = await contentRepository.GetByGenreAsync(genreId);
 
-        //    if (blogPost is null)
-        //    {
-        //        return NotFound();
-        //    }
+            //Convert Domain Model to DTO
 
-        //    // Convert Domain Model to DTO
-        //    var response = new BlogPostDTO
-        //    {
-        //        Id = blogPost.Id,
-        //        Author = blogPost.Author,
-        //        Content = blogPost.Content,
-        //        FeaturedImageUrl = blogPost.FeaturedImageUrl,
-        //        IsVisible = blogPost.IsVisible,
-        //        PublishedDate = blogPost.PublishedDate,
-        //        ShortDescription = blogPost.Description,
-        //        Title = blogPost.Title,
-        //        UrlHandle = blogPost.UrlHandle,
-        //        Categories = blogPost.categories.Select(x => new CategoryDTO
-        //        {
-        //            Id = x.Id,
-        //            Name = x.Name,
-        //            UrlHandle = x.UrlHandle
-        //        }).ToList()
-        //    };
+            var response = new List<ContentDTO>();
+            foreach (var content in contents)
+            {
+                response.Add(new ContentDTO
+                {
+                    Id = content.Id,
+                    Title = content.Title,
+                    Description = content.Description,
+                    FeaturedImageUrl = content.FeaturedImageUrl,
+                    PublishedDate = content.PublishedDate,
+                    Info = content.Info,
+                    RentalDuration = content.RentalDuration,
+                    IsExpired = content.IsExpired,
+                    LikeCount = content.LikeCount,
+                    DislikeCount = content.DislikeCount,
+                    CategoryId = content.CategoryId,
+                    Genres = content.Genres.Select(x => new GenreDTO
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                    }).ToList()
 
-        //    return Ok(response);
-        //}
+                });
+
+            }
+            return Ok(response);
+
+        }
+
+
+        [HttpGet]
+        [Route("/CategoryWise")]
+        public async Task<IActionResult> GetContentsBycategory(Guid categoryId)
+        {
+            var contents = await contentRepository.GetByCategoryAsync(categoryId);
+
+            //Convert Domain Model to DTO
+
+            var response = new List<ContentDTO>();
+            foreach (var content in contents)
+            {
+                response.Add(new ContentDTO
+                {
+                    Id = content.Id,
+                    Title = content.Title,
+                    Description = content.Description,
+                    FeaturedImageUrl = content.FeaturedImageUrl,
+                    PublishedDate = content.PublishedDate,
+                    Info = content.Info,
+                    RentalDuration = content.RentalDuration,
+                    IsExpired = content.IsExpired,
+                    LikeCount = content.LikeCount,
+                    DislikeCount = content.DislikeCount,
+                    CategoryId = content.CategoryId,
+                    Genres = content.Genres.Select(x => new GenreDTO
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                    }).ToList()
+
+                });
+
+            }
+            return Ok(response);
+
+        }
 
 
         // PUT: {apibaseurl}/api/blogposts/{id}
