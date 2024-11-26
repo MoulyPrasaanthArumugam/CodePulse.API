@@ -156,6 +156,84 @@ namespace CodePulse.API.Controllers
         }
 
         [HttpGet]
+        [Route("/MostLiked")]
+        public async Task<IActionResult> GetMostLiked()
+        {
+           // string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var contents = await contentRepository.GetByLikesAsync();
+
+            //Convert Domain Model to DTO
+
+            var response = new List<ContentDTO>();
+            foreach (var content in contents)
+            {
+                response.Add(new ContentDTO
+                {
+                    Id = content.Id,
+                    Title = content.Title,
+                    Description = content.Description,
+                    FeaturedImageUrl = content.FeaturedImageUrl,
+                    PublishedDate = content.PublishedDate,
+                    Info = content.Info,
+                    RentalDuration = content.RentalDuration,
+                    IsExpired = content.IsExpired,
+                    LikeCount = content.LikeCount,
+                    DislikeCount = content.DislikeCount,
+                    CategoryId = content.CategoryId,
+                    Genres = content.Genres.Select(x => new GenreDTO
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                    }).ToList()
+
+                });
+
+            }
+            return Ok(response);
+
+        }
+
+        [HttpGet]
+        [Route("/Favourites")]
+        public async Task<IActionResult> GetMyFavourite()
+        {
+             string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var contents = await contentRepository.GetByFavouritesAsync(userId);
+
+            //Convert Domain Model to DTO
+
+            var response = new List<ContentDTO>();
+            foreach (var content in contents)
+            {
+                response.Add(new ContentDTO
+                {
+                    Id = content.Id,
+                    Title = content.Title,
+                    Description = content.Description,
+                    FeaturedImageUrl = content.FeaturedImageUrl,
+                    PublishedDate = content.PublishedDate,
+                    Info = content.Info,
+                    RentalDuration = content.RentalDuration,
+                    IsExpired = content.IsExpired,
+                    LikeCount = content.LikeCount,
+                    DislikeCount = content.DislikeCount,
+                    CategoryId = content.CategoryId,
+                    Genres = content.Genres.Select(x => new GenreDTO
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                    }).ToList()
+
+                });
+
+            }
+            return Ok(response);
+
+        }
+
+        [HttpGet]
         [Route("{id:Guid}")]
         public async Task<IActionResult> GetContentByID([FromRoute] Guid id)
         {

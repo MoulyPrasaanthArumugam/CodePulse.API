@@ -13,6 +13,7 @@ namespace CodePulse.API.Repositories.Interfaces
         Task<IEnumerable<Content>> GetByGenreAsync(Guid id);
         Task<IEnumerable<Content?>> GetByCategoryAsync(Guid id);
         Task<IEnumerable<Content?>> GetByLikesAsync();
+        Task<IEnumerable<Content?>> GetByFavouritesAsync(string userId);     
 
         Task<Content?> UpdateAsync(Content blogPost);
         Task<Content?> DeleteAsync(Guid id);

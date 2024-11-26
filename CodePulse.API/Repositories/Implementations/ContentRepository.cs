@@ -25,9 +25,16 @@ namespace CodePulse.API.Repositories.Implementations
         public async Task<Like?> AddLikeAsync(Like like)
         {
             var liked = await dbContext.Like.FirstOrDefaultAsync(x => x.UserId == like.UserId && x.ContentId == like.ContentId);
+            var disLiked = await dbContext.Dislike.FirstOrDefaultAsync(x => x.UserId == like.UserId && x.ContentId == like.ContentId);
 
-            if (like == null)
+            if (liked == null)
             {
+                if (disLiked != null)
+                {
+                    dbContext.Dislike.Remove(disLiked);
+                    var dContent = await dbContext.Contents.FindAsync(like.ContentId);
+                    dContent.DislikeCount = (dContent.DislikeCount ?? 0) - 1;
+                }
                 dbContext.Like.Add(new Like { UserId = like.UserId, ContentId = like.ContentId });
                 var content = await dbContext.Contents.FindAsync(like.ContentId);
                 content.LikeCount = (content.LikeCount ?? 0) + 1;
@@ -41,10 +48,19 @@ namespace CodePulse.API.Repositories.Implementations
         public async Task<DisLike?> AddDisLikeAsync(DisLike disLike)
         {
             var disLiked = await dbContext.Dislike.FirstOrDefaultAsync(x => x.UserId == disLike.UserId && x.ContentId == disLike.ContentId);
+            var liked = await dbContext.Like.FirstOrDefaultAsync(x => x.UserId == disLike.UserId && x.ContentId == disLike.ContentId);
+
 
             if (disLiked == null)
             {
-                dbContext.Like.Add(new Like { UserId = disLike.UserId, ContentId = disLike.ContentId });
+                if(liked != null)
+                {
+                    dbContext.Like.Remove(liked);
+                    var dContent = await dbContext.Contents.FindAsync(disLike.ContentId);
+                    dContent.LikeCount = (dContent.LikeCount ?? 0) - 1;
+                }
+
+                dbContext.Dislike.Add(new DisLike { UserId = disLike.UserId, ContentId = disLike.ContentId });
                 var content = await dbContext.Contents.FindAsync(disLike.ContentId);
                 content.DislikeCount = (content.DislikeCount ?? 0) + 1;
                 await dbContext.SaveChangesAsync();
@@ -83,11 +99,18 @@ namespace CodePulse.API.Repositories.Implementations
         }
 
 
-        public async Task<IEnumerable<Content>> GetByLikesAsync()
+        public async Task<IEnumerable<Content?>> GetByLikesAsync()
         {
-            return await dbContext.Contents.OrderByDescending(x => x.LikeCount ?? 0).Take(10).ToListAsync();
+            return await dbContext.Contents.Include(g =>g.Genres).OrderByDescending(x => x.LikeCount ?? 0).Take(10).ToListAsync();
         }
 
+        public async Task<IEnumerable<Content?>> GetByFavouritesAsync(string userId)
+        {
+            return await dbContext.Like.Where(x =>x.UserId == userId)
+                .Include(c => c.Content).ThenInclude(g => g.Genres)
+                .Select( x => x.Content)
+                .ToListAsync();
+        }
 
         public async Task<Content?> UpdateAsync(Content content)
         {
