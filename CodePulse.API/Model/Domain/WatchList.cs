@@ -11,7 +11,7 @@ namespace CodePulse.API.Model.Domain
         //public DateTime AddedDate { get; set; } // Optional: Track when the item was added
 
         // Navigation properties
-        //public IdentityUser User { get; set; }
+        public IdentityUser User { get; set; }
         public Content Content { get; set; }
     }
 }

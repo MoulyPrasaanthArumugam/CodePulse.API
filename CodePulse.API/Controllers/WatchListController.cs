@@ -94,9 +94,8 @@ namespace CodePulse.API.Controllers
 
         // DELETE: {apibaseurl}/api/WatchList/{id}
         [HttpDelete]
-        [Route("{id:Guid}")]
         //[Authorize(Roles = "Writer")]
-        public async Task<IActionResult> RemoveFromWatchList([FromRoute] Guid contentId)
+        public async Task<IActionResult> RemoveFromWatchList( Guid contentId)
         {
             string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 

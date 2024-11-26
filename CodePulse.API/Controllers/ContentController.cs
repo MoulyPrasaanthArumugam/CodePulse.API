@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
+using System.Security.Claims;
 
 namespace CodePulse.API.Controllers
 {
@@ -83,13 +84,14 @@ namespace CodePulse.API.Controllers
         [HttpPost]
         [Route("/like")]
         //[Authorize(Roles = "Writer")]
-        public async Task<IActionResult> AddLike([FromBody] LikeDTO request)
+        public async Task<IActionResult> AddLike(Guid contentId)
         {
-            // Convert DTO to DOmain
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            
             var content = new Like
             {
-               UserId = request.UserId,
-               ContentId = request.ContentId,
+               UserId = userId,
+               ContentId = contentId,
             };
 
              await contentRepository.AddLikeAsync(content);            
@@ -101,13 +103,15 @@ namespace CodePulse.API.Controllers
         [HttpPost]
         [Route("/Dislike")]
         //[Authorize(Roles = "Writer")]
-        public async Task<IActionResult> AddDisLike([FromBody] DisLikeDTO request)
+        public async Task<IActionResult> AddDisLike(Guid contentId)
         {
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             // Convert DTO to DOmain
             var content = new DisLike
             {
-                UserId = request.UserId,
-                ContentId = request.ContentId,
+                UserId = userId,
+                ContentId = contentId,
             };
 
             await contentRepository.AddDisLikeAsync(content);

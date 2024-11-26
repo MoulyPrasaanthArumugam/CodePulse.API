@@ -32,7 +32,10 @@ namespace CodePulse.API.Repositories.Implementations
         }
         public async Task<IEnumerable<Watchlist>> GetAllAsync(string userId)
         {
-            var watchList = await _dbContext.WatchList.Where(x =>x.UserId == userId).Include(x=>x.Content).ToListAsync();
+            var watchList = await _dbContext.WatchList.Where(x =>x.UserId == userId)
+                                                       .Include(x=>x.Content)
+                                                       .ThenInclude(c =>c.Genres)
+                                                       .ToListAsync();
             return watchList;
         }
 
