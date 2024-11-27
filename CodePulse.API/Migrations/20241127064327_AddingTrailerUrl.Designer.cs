@@ -4,6 +4,7 @@ using CodePulse.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CodePulse.API.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20241127064327_AddingTrailerUrl")]
+    partial class AddingTrailerUrl
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -49,7 +52,7 @@ namespace CodePulse.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BlogImages", (string)null);
+                    b.ToTable("BlogImages");
                 });
 
             modelBuilder.Entity("CodePulse.API.Model.Domain.Category", b =>
@@ -64,7 +67,7 @@ namespace CodePulse.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Category", (string)null);
+                    b.ToTable("Category");
                 });
 
             modelBuilder.Entity("CodePulse.API.Model.Domain.Content", b =>
@@ -115,7 +118,7 @@ namespace CodePulse.API.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Contents", (string)null);
+                    b.ToTable("Contents");
                 });
 
             modelBuilder.Entity("CodePulse.API.Model.Domain.DisLike", b =>
@@ -137,7 +140,7 @@ namespace CodePulse.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Dislike", (string)null);
+                    b.ToTable("Dislike");
                 });
 
             modelBuilder.Entity("CodePulse.API.Model.Domain.Genre", b =>
@@ -152,7 +155,7 @@ namespace CodePulse.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Genre", (string)null);
+                    b.ToTable("Genre");
                 });
 
             modelBuilder.Entity("CodePulse.API.Model.Domain.Like", b =>
@@ -174,7 +177,7 @@ namespace CodePulse.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Like", (string)null);
+                    b.ToTable("Like");
                 });
 
             modelBuilder.Entity("CodePulse.API.Model.Domain.Watchlist", b =>
@@ -194,7 +197,7 @@ namespace CodePulse.API.Migrations
 
                     b.HasIndex("ContentId");
 
-                    b.ToTable("WatchList", (string)null);
+                    b.ToTable("WatchList");
                 });
 
             modelBuilder.Entity("ContentGenre", b =>
@@ -209,7 +212,7 @@ namespace CodePulse.API.Migrations
 
                     b.HasIndex("GenresId");
 
-                    b.ToTable("ContentGenre", (string)null);
+                    b.ToTable("ContentGenre");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
@@ -261,7 +264,7 @@ namespace CodePulse.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("IdentityUser", (string)null);
+                    b.ToTable("IdentityUser");
                 });
 
             modelBuilder.Entity("CodePulse.API.Model.Domain.Content", b =>

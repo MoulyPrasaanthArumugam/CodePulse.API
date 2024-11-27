@@ -35,6 +35,7 @@ namespace CodePulse.API.Repositories.Implementations
             var watchList = await _dbContext.WatchList.Where(x =>x.UserId == userId)
                                                        .Include(x=>x.Content)
                                                        .ThenInclude(c =>c.Genres)
+                                                       .Include(c => c.Content.Category)
                                                        .ToListAsync();
             return watchList;
         }

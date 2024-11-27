@@ -71,12 +71,12 @@ namespace CodePulse.API.Repositories.Implementations
 
         public async Task<IEnumerable<Content>> GetAllAsync()
         {
-            return await dbContext.Contents.Include(X => X.Genres).ToListAsync();
+            return await dbContext.Contents.Include(X => X.Genres).Include(c => c.Category).ToListAsync();
         }
 
         public async Task<Content?> GetByIDAsync(Guid id)
         {
-            return await dbContext.Contents.Include(X => X.Genres).FirstOrDefaultAsync(x => x.Id == id);
+            return await dbContext.Contents.Include(X => X.Genres).Include(c => c.Category).FirstOrDefaultAsync(x => x.Id == id);
 
         }
 
@@ -84,6 +84,7 @@ namespace CodePulse.API.Repositories.Implementations
         {
             var items = await dbContext.Contents
                          .Include(x => x.Genres)
+                         .Include(c => c.Category)
                          .Where(x => x.Genres.Any(g => g.Id == genreId))
                          .ToListAsync();
             return items;
@@ -93,6 +94,7 @@ namespace CodePulse.API.Repositories.Implementations
         {
             var items = await dbContext.Contents
                          .Include( x => x.Genres)
+                         .Include(c => c.Category)
                          .Where(x => x.CategoryId == categoryId)
                          .ToListAsync();
             return items;
@@ -101,14 +103,21 @@ namespace CodePulse.API.Repositories.Implementations
 
         public async Task<IEnumerable<Content?>> GetByLikesAsync()
         {
-            return await dbContext.Contents.Include(g =>g.Genres).OrderByDescending(x => x.LikeCount ?? 0).Take(10).ToListAsync();
+            return await dbContext.Contents.Include(g => g.Genres)
+                .Include(c => c.Category)
+                .OrderByDescending(x => x.LikeCount ?? 0)
+                .Take(10).ToListAsync();
         }
 
         public async Task<IEnumerable<Content?>> GetByFavouritesAsync(string userId)
         {
-            return await dbContext.Like.Where(x =>x.UserId == userId)
-                .Include(c => c.Content).ThenInclude(g => g.Genres)
-                .Select( x => x.Content)
+            return await dbContext.Like
+                .Where(x =>x.UserId == userId)
+                .Include(like => like.Content)
+                    .ThenInclude(content => content.Genres)
+                .Include(like => like.Content)
+                    .ThenInclude( content => content.Category)
+                .Select (Like => Like.Content)
                 .ToListAsync();
         }
 

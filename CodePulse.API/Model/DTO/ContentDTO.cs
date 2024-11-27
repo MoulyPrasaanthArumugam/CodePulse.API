@@ -6,6 +6,7 @@
         public String Title { get; set; }
         public string Description { get; set; }
         public string FeaturedImageUrl { get; set; }
+        public string TrailerUrl { get; set; }
         public DateTime PublishedDate { get; set; }
         public string Info { get; set; }
         public int RentalDuration { get; set; }
@@ -14,6 +15,8 @@
         public int? DislikeCount { get; set; }
 
         public Guid CategoryId { get; set; } // New property for CategoryId
+
+        public string CategoryName { get; set; } // To Hold Category Value
         public List<GenreDTO> Genres { get; set; } = new List<GenreDTO>();
     }
 }

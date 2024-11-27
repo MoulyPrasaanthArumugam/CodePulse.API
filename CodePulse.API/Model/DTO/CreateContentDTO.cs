@@ -5,6 +5,8 @@
         public String Title { get; set; }
         public string Description { get; set; }
         public string FeaturedImageUrl { get; set; }
+        public string TrailerUrl { get; set; }
+
         public DateTime PublishedDate { get; set; }
         public string Info { get; set; }
         public int RentalDuration { get; set; }

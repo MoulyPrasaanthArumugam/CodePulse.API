@@ -24,21 +24,7 @@ namespace CodePulse.API.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
-
-
-            // Configure Watchlist relationships
-            modelBuilder.Entity<WishList>()
-                .HasOne<IdentityUser>()
-                .WithMany() // User can have many watchlist items
-                .HasForeignKey(w => w.UserId) // UserId in Watchlist is the foreign key
-                .HasPrincipalKey(u => u.Id)
-                .OnDelete(DeleteBehavior.Cascade); // Optional: Set delete behavior
-
-            modelBuilder.Entity<WishList>()
-                .HasOne(w =>w.Content)
-                .WithMany() // Content can appear in many watchlists
-                .HasForeignKey(w => w.ContentId);
+            base.OnModelCreating(modelBuilder);           
 
             modelBuilder.Entity<Like>()
                 .HasOne(w => w.Content)

@@ -16,11 +16,13 @@ namespace CodePulse.API.Controllers
     {
         private readonly IContentRepository contentRepository;
         private readonly IGenreRepository genreRepository;
+        private readonly ILogger _logger;
 
-        public ContentController(IContentRepository contentRepository, IGenreRepository genreRepository)
+        public ContentController(IContentRepository contentRepository, IGenreRepository genreRepository, ILogger logger)
         {
             this.contentRepository = contentRepository;
             this.genreRepository = genreRepository;
+            _logger = logger;
         }
 
         // POST: {apibaseurl}/api/blogposts
@@ -28,56 +30,70 @@ namespace CodePulse.API.Controllers
         //[Authorize(Roles = "Writer")]
         public async Task<IActionResult> CreateContent([FromBody] CreateContentDTO request)
         {
-            // Convert DTO to DOmain
-            var content = new Content
-            {
-                Title = request.Title,
-                Description = request.Description,
-                FeaturedImageUrl = request.FeaturedImageUrl,
-                Info = request.Info,
-                PublishedDate = request.PublishedDate,
-                RentalDuration = request.RentalDuration,
-                IsExpired = request.IsExpired,
-                LikeCount = request.LikeCount,
-                DislikeCount = request.DislikeCount,    
-                CategoryId = request.CategoryId,
-                Genres = new List<Genre>()
-            };
+            _logger.LogInformation("Converting DTO to Main");
 
-
-            foreach (var genreGuid in request.Genres)
+            try
             {
-                var existingGenres = await genreRepository.GetByIdAsync(genreGuid);
-                if (existingGenres is not null)
+                // Convert DTO to DOmain
+                var content = new Content
                 {
-                    content.Genres.Add(existingGenres);
+                    Title = request.Title,
+                    Description = request.Description,
+                    FeaturedImageUrl = request.FeaturedImageUrl,
+                    TrailerUrl = request.TrailerUrl,
+                    Info = request.Info,
+                    PublishedDate = request.PublishedDate,
+                    RentalDuration = request.RentalDuration,
+                    IsExpired = request.IsExpired,
+                    LikeCount = request.LikeCount,
+                    DislikeCount = request.DislikeCount,
+                    CategoryId = request.CategoryId,
+                    Genres = new List<Genre>()
+                };
+
+
+                foreach (var genreGuid in request.Genres)
+                {
+                    var existingGenres = await genreRepository.GetByIdAsync(genreGuid);
+                    if (existingGenres is not null)
+                    {
+                        content.Genres.Add(existingGenres);
+                    }
                 }
-            }
 
-            content = await contentRepository.CreateAsync(content);
+                content = await contentRepository.CreateAsync(content);
 
-            // Convert Domain Model back to DTO
-            var response = new ContentDTO
-            {
-                Id = content.Id,
-                Title = content.Title,
-                Description = content.Description,
-                FeaturedImageUrl = content.FeaturedImageUrl,
-                PublishedDate = content.PublishedDate,
-                Info = content.Info,
-                RentalDuration = content.RentalDuration,
-                IsExpired = content.IsExpired,
-                LikeCount = content.LikeCount,
-                DislikeCount = content.DislikeCount,
-                CategoryId = content.CategoryId,
-                Genres = content.Genres.Select(x => new GenreDTO
+                // Convert Domain Model back to DTO
+                var response = new ContentDTO
                 {
-                    Id = x.Id,
-                    Name = x.Name,
-                }).ToList()
-            };
+                    Id = content.Id,
+                    Title = content.Title,
+                    Description = content.Description,
+                    FeaturedImageUrl = content.FeaturedImageUrl,
+                    TrailerUrl = content.TrailerUrl,
+                    PublishedDate = content.PublishedDate,
+                    Info = content.Info,
+                    RentalDuration = content.RentalDuration,
+                    IsExpired = content.IsExpired,
+                    LikeCount = content.LikeCount,
+                    DislikeCount = content.DislikeCount,
+                    CategoryId = content.CategoryId,
+                    CategoryName = content.Category.Name,
+                    Genres = content.Genres.Select(x => new GenreDTO
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                    }).ToList()
+                };
 
-            return Ok(response);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving top content at {Time}", DateTime.UtcNow);
+                return StatusCode(500, "Internal Server Error");
+            }
+            
         }
 
         // POST: {apibaseurl}/api/Like
@@ -135,6 +151,7 @@ namespace CodePulse.API.Controllers
                     Title = content.Title,
                     Description = content.Description,
                     FeaturedImageUrl = content.FeaturedImageUrl,
+                    TrailerUrl = content.TrailerUrl,
                     PublishedDate = content.PublishedDate,
                     Info = content.Info,
                     RentalDuration = content.RentalDuration,
@@ -142,6 +159,7 @@ namespace CodePulse.API.Controllers
                     LikeCount = content.LikeCount,
                     DislikeCount = content.DislikeCount,
                     CategoryId = content.CategoryId,
+                    CategoryName = content.Category.Name,
                     Genres = content.Genres.Select(x => new GenreDTO
                     {
                         Id = x.Id,
@@ -174,6 +192,7 @@ namespace CodePulse.API.Controllers
                     Title = content.Title,
                     Description = content.Description,
                     FeaturedImageUrl = content.FeaturedImageUrl,
+                    TrailerUrl=content.TrailerUrl,
                     PublishedDate = content.PublishedDate,
                     Info = content.Info,
                     RentalDuration = content.RentalDuration,
@@ -181,6 +200,7 @@ namespace CodePulse.API.Controllers
                     LikeCount = content.LikeCount,
                     DislikeCount = content.DislikeCount,
                     CategoryId = content.CategoryId,
+                    CategoryName=content.Category.Name,
                     Genres = content.Genres.Select(x => new GenreDTO
                     {
                         Id = x.Id,
@@ -213,6 +233,7 @@ namespace CodePulse.API.Controllers
                     Title = content.Title,
                     Description = content.Description,
                     FeaturedImageUrl = content.FeaturedImageUrl,
+                    TrailerUrl = content.TrailerUrl,
                     PublishedDate = content.PublishedDate,
                     Info = content.Info,
                     RentalDuration = content.RentalDuration,
@@ -220,6 +241,7 @@ namespace CodePulse.API.Controllers
                     LikeCount = content.LikeCount,
                     DislikeCount = content.DislikeCount,
                     CategoryId = content.CategoryId,
+                    CategoryName = content.Category.Name,
                     Genres = content.Genres.Select(x => new GenreDTO
                     {
                         Id = x.Id,
@@ -252,6 +274,7 @@ namespace CodePulse.API.Controllers
                 Title = content.Title,
                 Description = content.Description,
                 FeaturedImageUrl = content.FeaturedImageUrl,
+                TrailerUrl = content.TrailerUrl,
                 PublishedDate = content.PublishedDate,
                 Info = content.Info,
                 RentalDuration = content.RentalDuration,
@@ -259,6 +282,7 @@ namespace CodePulse.API.Controllers
                 LikeCount = content.LikeCount,
                 DislikeCount = content.DislikeCount,
                 CategoryId = content.CategoryId,
+                CategoryName= content.Category.Name,
                 Genres = content.Genres.Select(x => new GenreDTO
                 {
                     Id = x.Id,
@@ -287,6 +311,7 @@ namespace CodePulse.API.Controllers
                     Title = content.Title,
                     Description = content.Description,
                     FeaturedImageUrl = content.FeaturedImageUrl,
+                    TrailerUrl = content.TrailerUrl,
                     PublishedDate = content.PublishedDate,
                     Info = content.Info,
                     RentalDuration = content.RentalDuration,
@@ -294,6 +319,7 @@ namespace CodePulse.API.Controllers
                     LikeCount = content.LikeCount,
                     DislikeCount = content.DislikeCount,
                     CategoryId = content.CategoryId,
+                    CategoryName = content.Category.Name,
                     Genres = content.Genres.Select(x => new GenreDTO
                     {
                         Id = x.Id,
@@ -325,6 +351,7 @@ namespace CodePulse.API.Controllers
                     Title = content.Title,
                     Description = content.Description,
                     FeaturedImageUrl = content.FeaturedImageUrl,
+                    TrailerUrl = content.TrailerUrl,
                     PublishedDate = content.PublishedDate,
                     Info = content.Info,
                     RentalDuration = content.RentalDuration,
@@ -332,6 +359,7 @@ namespace CodePulse.API.Controllers
                     LikeCount = content.LikeCount,
                     DislikeCount = content.DislikeCount,
                     CategoryId = content.CategoryId,
+                    CategoryName = content.Category.Name,
                     Genres = content.Genres.Select(x => new GenreDTO
                     {
                         Id = x.Id,
@@ -359,6 +387,7 @@ namespace CodePulse.API.Controllers
                 Title = request.Title,
                 Description = request.Description,
                 FeaturedImageUrl = request.FeaturedImageUrl,
+                TrailerUrl= request.TrailerUrl,
                 Info = request.Info,
                 PublishedDate = request.PublishedDate,
                 RentalDuration = request.RentalDuration,
@@ -396,6 +425,7 @@ namespace CodePulse.API.Controllers
                 Title = content.Title,
                 Description = content.Description,
                 FeaturedImageUrl = content.FeaturedImageUrl,
+                TrailerUrl = content.TrailerUrl,
                 PublishedDate = content.PublishedDate,
                 Info = content.Info,
                 RentalDuration = content.RentalDuration,

@@ -70,12 +70,15 @@ namespace CodePulse.API.Controllers
                              Title = watchlist.Content.Title,
                              Description = watchlist.Content.Description,
                              FeaturedImageUrl = watchlist.Content.FeaturedImageUrl,
+                             TrailerUrl = watchlist.Content.TrailerUrl,
                              PublishedDate = watchlist.Content.PublishedDate,
                              Info = watchlist.Content.Info,
                              RentalDuration = watchlist.Content.RentalDuration,
                              IsExpired = watchlist.Content.IsExpired,
                              LikeCount = watchlist.Content.LikeCount,
                              DislikeCount = watchlist.Content.DislikeCount,
+                             CategoryId = watchlist.Content.CategoryId,
+                             CategoryName = watchlist.Content.Category.Name,
                                 Genres = watchlist.Content.Genres.Select(genre => new GenreDTO
                                     {
                                          Id = genre.Id,

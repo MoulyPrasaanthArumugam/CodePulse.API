@@ -8,9 +8,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
@@ -117,6 +117,7 @@ app.UseCors(options =>
     options.AllowAnyOrigin();
 }
 );
+app.Logger.LogInformation("Starting Middlewares");
 
 app.UseAuthentication();  //Setting Authentication to Pipeline
 app.UseAuthorization();   //Setting Authorization to Pipeline
