@@ -16,13 +16,13 @@ namespace CodePulse.API.Controllers
     {
         private readonly IContentRepository contentRepository;
         private readonly IGenreRepository genreRepository;
-        private readonly ILogger _logger;
+        //private readonly ILogger _logger;
 
-        public ContentController(IContentRepository contentRepository, IGenreRepository genreRepository, ILogger logger)
+        public ContentController(IContentRepository contentRepository, IGenreRepository genreRepository)
         {
             this.contentRepository = contentRepository;
             this.genreRepository = genreRepository;
-            _logger = logger;
+            //_logger = logger;
         }
 
         // POST: {apibaseurl}/api/blogposts
@@ -30,7 +30,7 @@ namespace CodePulse.API.Controllers
         //[Authorize(Roles = "Writer")]
         public async Task<IActionResult> CreateContent([FromBody] CreateContentDTO request)
         {
-            _logger.LogInformation("Converting DTO to Main");
+            //_logger.LogInformation("Initiating Content Creation");
 
             try
             {
@@ -63,6 +63,7 @@ namespace CodePulse.API.Controllers
 
                 content = await contentRepository.CreateAsync(content);
 
+                //_logger.LogInformation($"Created content: {content}");
                 // Convert Domain Model back to DTO
                 var response = new ContentDTO
                 {
@@ -78,7 +79,7 @@ namespace CodePulse.API.Controllers
                     LikeCount = content.LikeCount,
                     DislikeCount = content.DislikeCount,
                     CategoryId = content.CategoryId,
-                    CategoryName = content.Category.Name,
+                   // CategoryName = content.Category.Name,
                     Genres = content.Genres.Select(x => new GenreDTO
                     {
                         Id = x.Id,
@@ -90,7 +91,7 @@ namespace CodePulse.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while retrieving top content at {Time}", DateTime.UtcNow);
+                //_logger.LogError(ex, "An error occurred while retrieving top content at {Time}", DateTime.UtcNow);
                 return StatusCode(500, "Internal Server Error");
             }
             
