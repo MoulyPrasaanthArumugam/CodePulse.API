@@ -8,9 +8,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
@@ -58,8 +58,10 @@ builder.Services.AddDbContext<AuthDbContext>(Options =>
 
 //Configuring Repository Implementations
 builder.Services.AddScoped<ICategoryRepository,CategoryRepository>();
-builder.Services.AddScoped<IBlogPostRepository,BlogPostRepository>();
+builder.Services.AddScoped<IContentRepository,ContentRepository>();
 builder.Services.AddScoped<IImageRepository,ImageRepository>();
+builder.Services.AddScoped<IGenreRepository, GenreRepository>();
+builder.Services.AddScoped<IWatchListRepository, WatchListRepository>();
 builder.Services.AddScoped<ITokenRepository,TokenRepository>();
 
 //Configuring what kind of User and roles to use
@@ -115,6 +117,7 @@ app.UseCors(options =>
     options.AllowAnyOrigin();
 }
 );
+app.Logger.LogInformation("Starting Middlewares");
 
 app.UseAuthentication();  //Setting Authentication to Pipeline
 app.UseAuthorization();   //Setting Authorization to Pipeline

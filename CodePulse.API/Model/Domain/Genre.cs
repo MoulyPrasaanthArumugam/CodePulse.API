@@ -1,10 +1,10 @@
 ﻿namespace CodePulse.API.Model.Domain
 {
-    public class Category
+    public class Genre
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        //One to Many relationship - Each category can have multiple Contents.
+        //Many to Many relationship - Each content can have multiple Genres, Each Genres can have multiple contents.
         public ICollection<Content> Contents { get; set; }
     }
 }

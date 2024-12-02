@@ -65,7 +65,7 @@ namespace CodePulse.API.Controllers
             // Create IdentityUser object
             var user = new IdentityUser
             {
-                UserName = request.Email?.Trim(),
+                UserName = request.UserName?.Trim(),
                 Email = request.Email?.Trim()
             };
 

@@ -4,6 +4,7 @@ using CodePulse.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CodePulse.API.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20241121045152_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -49,7 +52,7 @@ namespace CodePulse.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BlogImages", (string)null);
+                    b.ToTable("BlogImages");
                 });
 
             modelBuilder.Entity("CodePulse.API.Model.Domain.Category", b =>
@@ -64,7 +67,7 @@ namespace CodePulse.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Category", (string)null);
+                    b.ToTable("Category");
                 });
 
             modelBuilder.Entity("CodePulse.API.Model.Domain.Content", b =>
@@ -107,37 +110,11 @@ namespace CodePulse.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TrailerUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Contents", (string)null);
-                });
-
-            modelBuilder.Entity("CodePulse.API.Model.Domain.DisLike", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ContentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ContentId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Dislike", (string)null);
+                    b.ToTable("Contents");
                 });
 
             modelBuilder.Entity("CodePulse.API.Model.Domain.Genre", b =>
@@ -152,10 +129,10 @@ namespace CodePulse.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Genre", (string)null);
+                    b.ToTable("Genre");
                 });
 
-            modelBuilder.Entity("CodePulse.API.Model.Domain.Like", b =>
+            modelBuilder.Entity("CodePulse.API.Model.Domain.WishList", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -174,27 +151,7 @@ namespace CodePulse.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Like", (string)null);
-                });
-
-            modelBuilder.Entity("CodePulse.API.Model.Domain.Watchlist", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ContentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ContentId");
-
-                    b.ToTable("WatchList", (string)null);
+                    b.ToTable("WatchList");
                 });
 
             modelBuilder.Entity("ContentGenre", b =>
@@ -209,7 +166,7 @@ namespace CodePulse.API.Migrations
 
                     b.HasIndex("GenresId");
 
-                    b.ToTable("ContentGenre", (string)null);
+                    b.ToTable("ContentGenre");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
@@ -261,7 +218,7 @@ namespace CodePulse.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("IdentityUser", (string)null);
+                    b.ToTable("IdentityUser");
                 });
 
             modelBuilder.Entity("CodePulse.API.Model.Domain.Content", b =>
@@ -275,7 +232,7 @@ namespace CodePulse.API.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("CodePulse.API.Model.Domain.DisLike", b =>
+            modelBuilder.Entity("CodePulse.API.Model.Domain.WishList", b =>
                 {
                     b.HasOne("CodePulse.API.Model.Domain.Content", "Content")
                         .WithMany()
@@ -286,34 +243,6 @@ namespace CodePulse.API.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Content");
-                });
-
-            modelBuilder.Entity("CodePulse.API.Model.Domain.Like", b =>
-                {
-                    b.HasOne("CodePulse.API.Model.Domain.Content", "Content")
-                        .WithMany()
-                        .HasForeignKey("ContentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Content");
-                });
-
-            modelBuilder.Entity("CodePulse.API.Model.Domain.Watchlist", b =>
-                {
-                    b.HasOne("CodePulse.API.Model.Domain.Content", "Content")
-                        .WithMany()
-                        .HasForeignKey("ContentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
