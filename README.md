@@ -1,7 +1,4 @@
 # User Details
-User1@CodePulse.com
-User1@123
-
 admin@CodePulse.com
 Admin@123
 
@@ -67,4 +64,39 @@ ON DELETE CASCADE;
 
 
 # ModelState
-ModelState is primarily used to track and handle validation errors during model binding. It ensures that any issues—such as missing required fields, invalid data types, or violations of validation attributes—are captured. By leveraging ModelState, we can provide customized and user-friendly error responses when errors occur during model binding or other validation scenarios.
+ModelState is primarily used to track and handle validation errors during model binding. It ensures that any issues—such as missing required fields,
+invalid data types, or violations of validation attributes—are captured. By leveraging ModelState, we can provide customized and user-friendly error
+responses when errors occur during model binding or other validation scenarios.
+
+# Logging
+*primarily we can use default ILogger to Log but to get more flexibility we can use 3rd party like SeriLog/Log4Net
+
+*Serilog is a popular logging framework for ASP.NET Core that provides a flexible and powerful way to capture and store log data.
+*It is a third party library that can be easily integrated with an ASP.NET Core Web API.
+
+# Serilog Provides more flexibility like managing diferent log levels in both console and File.
+new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Debug)
+    .WriteTo.File("logs/log.txt", restrictedToMinimumLevel: LogEventLevel.Warning)
+    .CreateLogger();
+
+
+# Log levels
+Level		Priority	Description
+Trace		1			Very fine-grained details, typically not enabled in production.
+Debug		2			Used during development for diagnostic purposes.
+Information	3			General application flow and operational information.
+Warning		4			Potential issues or unexpected events that don't stop the application.
+Error		5			Recoverable failures or issues requiring immediate investigation.
+Critical	6			Catastrophic failures requiring urgent attention.
+
+# We can use Log levels to limit the type of logs 
+for ex) if we set loglevel to Debug (2) , we can get all levels of logs from 2 - 6 skippin log level 1
+
+
+# Exception Handling
+Global Exception Handling is been used to centralize handling of any Unhandled Exceptions to create consistent Error Response and to Avoid Repetition like wrapping
+every action method within try catch blocks.
+
+

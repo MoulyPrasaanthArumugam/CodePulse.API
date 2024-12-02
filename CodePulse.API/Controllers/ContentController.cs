@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace CodePulse.API.Controllers
 {
@@ -16,13 +17,21 @@ namespace CodePulse.API.Controllers
     {
         private readonly IContentRepository contentRepository;
         private readonly IGenreRepository genreRepository;
-        //private readonly ILogger _logger;
+        private readonly ILogger<ContentController> logger;
 
-        public ContentController(IContentRepository contentRepository, IGenreRepository genreRepository)
+        public ContentController(IContentRepository contentRepository, IGenreRepository genreRepository, ILogger<ContentController> logger)
         {
             this.contentRepository = contentRepository;
             this.genreRepository = genreRepository;
-            //_logger = logger;
+            this.logger = logger;
+
+            //Testing Log Levels
+            logger.LogTrace("Trace Log");
+            logger.LogDebug("Debug Log");
+            logger.LogInformation("Info Log");
+            logger.LogWarning("Warning Log");
+            logger.LogError("Error Log");
+            logger.LogCritical("Critical Log");
         }
 
         // POST: {apibaseurl}/api/blogposts
@@ -138,7 +147,9 @@ namespace CodePulse.API.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetAllContents()
-        {
+        {       
+            //throw new Exception("This is a custom Error for Testing");
+
             var contents = await contentRepository.GetAllAsync();
 
             //Convert Domain Model to DTO
