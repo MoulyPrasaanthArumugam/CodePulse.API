@@ -13,9 +13,11 @@ Its an entry point of an application, we register our dependency here, request h
 We use AuthDB context to interact with authentication Tables
 
 # Why we Use DTO?
-we can avoid Unnecessary Data by mapping domain model to DTO
+we can avoid Unnecessary Data by mapping domain model to DTO (View Models)
 Uses: Performance, security,versioning
 
+#AutoMapper
+AutoMapper can be used for Object to Object Mapping (DTO - Domain Model Mapping). Avoid Code Reduntancy.
 
 # Dependency Injection :
 Instead of creating instance of class within a controller we will pass object as a parameter within the controller through constructor
@@ -95,8 +97,10 @@ Critical	6			Catastrophic failures requiring urgent attention.
 for ex) if we set loglevel to Debug (2) , we can get all levels of logs from 2 - 6 skippin log level 1
 
 
-# Exception Handling
-Global Exception Handling is been used to centralize handling of any Unhandled Exceptions to create consistent Error Response and to Avoid Repetition like wrapping
-every action method within try catch blocks.
+# Global Exception Handling
+Global Exception Handling is been used to centralize handling of any Unhandled Exceptions to create consistent Error Response 
+and to Avoid Repetition like wrapping every action method within try catch blocks.
+
+Here we have configured Custom Middleware Named "ExceptionHandlerMiddleware" to handle Internal server errors.
 
 

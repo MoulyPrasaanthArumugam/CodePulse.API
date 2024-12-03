@@ -11,6 +11,8 @@ using CodePulse.API.Model.DTO;
 using CodePulse.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using System.Drawing.Printing;
+using AutoMapper;
+using System.Text.Json;
 
 
 namespace CodePulse.API.Controllers
@@ -20,10 +22,14 @@ namespace CodePulse.API.Controllers
     public class CategoriesController : ControllerBase
     {
         private readonly ICategoryRepository categoryRepository;
+        private readonly IMapper mapper;
+        private readonly ILogger<CategoriesController> logger;
 
-        public CategoriesController(ICategoryRepository categoryRepository)
+        public CategoriesController(ICategoryRepository categoryRepository, IMapper mapper, ILogger<CategoriesController> logger)
         {
             this.categoryRepository = categoryRepository;
+            this.mapper = mapper;
+            this.logger = logger;
         }
 
 
@@ -53,10 +59,18 @@ namespace CodePulse.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllCategoryAsynch()
         {
+            logger.LogInformation("Get All Category  Action Method Started");
+
             var categories = await categoryRepository.GetAllCategoriesAsynch();
 
-            var response = new List<CategoryDTO>();
+            //Serialize the Object to JSON for Logging
+            string serializedCategories = JsonSerializer.Serialize(categories);
+
+            logger.LogInformation($"Caregories:{serializedCategories}");
+
             //Map Domain Model to DTO
+            var response = new List<CategoryDTO>();
+
             foreach (var category in categories)
             {
                 response.Add(new CategoryDTO
@@ -65,6 +79,8 @@ namespace CodePulse.API.Controllers
                     Name = category.Name
                 });
             }
+
+            //var response = mapper.Map<List<CategoryDTO>>(categories);
             return Ok(response);
         }
 
