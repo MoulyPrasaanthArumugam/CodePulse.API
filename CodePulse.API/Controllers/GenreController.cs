@@ -1,4 +1,5 @@
-﻿using CodePulse.API.Model.Domain;
+﻿using AutoMapper;
+using CodePulse.API.Model.Domain;
 using CodePulse.API.Model.DTO;
 using CodePulse.API.Repositories.Implementations;
 using CodePulse.API.Repositories.Interfaces;
@@ -12,9 +13,12 @@ namespace CodePulse.API.Controllers
     public class GenreController : ControllerBase
     {
         private readonly IGenreRepository _genreRepository;
-        public GenreController(IGenreRepository genreRepository) 
+        private readonly IMapper mapper;
+
+        public GenreController(IGenreRepository genreRepository, IMapper mapper) 
         { 
            _genreRepository = genreRepository;
+            this.mapper = mapper;
         }
 
         // POST: api/Categories
@@ -23,20 +27,11 @@ namespace CodePulse.API.Controllers
         //[Authorize(Roles = "Writer")]
         public async Task<IActionResult> SaveGenre(CreateGenreDTO request)
         {
-            //Map DTO to Domain Model 
-            var genre = new Genre()
-            {
-                Name = request.Name
-            };
-
-            await _genreRepository.CreateAsync(genre);
-
-            //Map Domain Model to DTO
-            var response = new GenreDTO()
-            {
-                Id = genre.Id,
-                Name = request.Name
-            };
+           //Map DTO to Domain Model 
+           var genre = mapper.Map<Genre>(request);
+           var savedGenre =  await _genreRepository.CreateAsync(genre);
+           //Map Domain Model to DTO
+           var response = mapper.Map<GenreDTO>(savedGenre);
             return Ok(response);
         }
 
@@ -44,17 +39,7 @@ namespace CodePulse.API.Controllers
         public async Task<IActionResult> GetAllGenreAsynch()
         {
             var genres = await _genreRepository.GetAllAsync();
-
-            var response = new List<GenreDTO>();
-            //Map Domain Model to DTO
-            foreach (var genre in genres)
-            {
-                response.Add(new GenreDTO
-                {
-                    Id = genre.Id,
-                    Name = genre.Name
-                });
-            }
+            var response = mapper.Map<List<GenreDTO>>(genres);
             return Ok(response);
         }       
 
@@ -68,11 +53,8 @@ namespace CodePulse.API.Controllers
             {
                 return NotFound();
             }
-            var response = new CategoryDTO()
-            {
-                Id = genre.Id,
-                Name = genre.Name
-            };
+            var response = mapper.Map<GenreDTO>(genre);
+
             return Ok(response);
         }
 
@@ -94,11 +76,7 @@ namespace CodePulse.API.Controllers
             }
             //Converting Domain Model to DTO
 
-            var response = new GenreDTO()
-            {
-                Id = genre.Id,
-                Name = genre.Name
-            };
+            var response = mapper.Map<GenreDTO>(genre);
             return Ok(response);
         }
 
@@ -112,11 +90,7 @@ namespace CodePulse.API.Controllers
             {
                 return NotFound();
             }
-            var response = new GenreDTO()
-            {
-                Id = genre.Id,
-                Name = genre.Name
-            };
+            var response = mapper.Map<GenreDTO>(genre);
             return Ok(response);
         }
 

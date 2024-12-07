@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using CodePulse.API.Middlewares;
 using AutoMapper;
+using CodePulse.API.Mappings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -77,7 +78,9 @@ builder.Services.AddScoped<IImageRepository,ImageRepository>();
 builder.Services.AddScoped<IGenreRepository, GenreRepository>();
 builder.Services.AddScoped<IWatchListRepository, WatchListRepository>();
 builder.Services.AddScoped<ITokenRepository,TokenRepository>();
-builder.Services.AddAutoMapper(typeof(Mapper));
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+
 
 //Configuring what kind of User and roles to use
 builder.Services.AddIdentityCore<IdentityUser>()

@@ -40,19 +40,13 @@ namespace CodePulse.API.Controllers
         public async Task<IActionResult> SaveCategory(CreateCategoryDTO request)
         {
             //Map DTO to Domain Model 
-            var category = new Category()
-            {
-                Name = request.Name
-            };
+            var category = mapper.Map<Category>(request);
 
             await categoryRepository.CreateCategoryAsynch(category);
 
             //Map Domain Model to DTO
-            var response = new CategoryDTO()
-            {
-                Id = category.Id,
-                Name = request.Name
-            };
+            var response = mapper.Map<CategoryDTO>(category);
+
             return Ok(response);
         }
 
@@ -69,18 +63,7 @@ namespace CodePulse.API.Controllers
             logger.LogInformation($"Caregories:{serializedCategories}");
 
             //Map Domain Model to DTO
-            var response = new List<CategoryDTO>();
-
-            foreach (var category in categories)
-            {
-                response.Add(new CategoryDTO
-                {
-                    Id = category.Id,
-                    Name = category.Name
-                });
-            }
-
-            //var response = mapper.Map<List<CategoryDTO>>(categories);
+            var response = mapper.Map<List<CategoryDTO>>(categories);
             return Ok(response);
         }
 
@@ -116,11 +99,9 @@ namespace CodePulse.API.Controllers
             {
                 return NotFound();
             }
-            var response = new CategoryDTO()
-            {
-                Id = category.Id,
-                Name = category.Name
-            };
+            //Converting Domain model to DTO
+            var response = mapper.Map<CategoryDTO>(category);
+
             return Ok(response);
         }
 
@@ -129,24 +110,19 @@ namespace CodePulse.API.Controllers
         //[Authorize(Roles = "Writer")]
         public async Task<IActionResult> EditCategory([FromRoute] Guid id, UpdateCategoryDTO request)
         {
-            var catrgory = new Category()
+            var category = new Category()
             {
                 Id = id,
                 Name = request.Name
             };
-            catrgory = await categoryRepository.UpdateAsynch(catrgory);
+            category = await categoryRepository.UpdateAsynch(category);
 
-            if (catrgory is null)
+            if (category is null)
             {
                 return NotFound();
             }
             //Converting Domain Model to DTO
-
-            var response = new CategoryDTO()
-            {
-                Id = catrgory.Id,
-                Name = catrgory.Name
-            };
+            var response = mapper.Map<CategoryDTO>(category);
             return Ok(response);
         }
 
@@ -160,11 +136,8 @@ namespace CodePulse.API.Controllers
             {
                 return NotFound();
             }
-            var response = new CategoryDTO()
-            {
-                Id = category.Id,
-                Name = category.Name
-            };
+            //Converting Domain Model to DTO
+            var response = mapper.Map<CategoryDTO>(category);
             return Ok(response);
         }
 
