@@ -41,10 +41,26 @@ namespace CodePulse.API.Mappings
                 .ForMember(dest => dest.Contents, opt => opt.MapFrom(src => src.Content != null ? new List<Content> { src.Content} : new List<Content>()));
 
             #endregion
-            #region
+
+            #region Content Mapping
             CreateMap<Content, ContentDTO>()
-                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name))
-                .ForMember(dest => dest.Genres, opt => opt.MapFrom(src => src.Genres));
+                .ForSourceMember(src => src.Category, opt => opt.DoNotValidate());
+
+            // Map CreateContentDTO to Content
+            CreateMap<CreateContentDTO, Content>()
+                .ForMember(dest => dest.Genres, opt => opt.MapFrom(src =>
+                    src.Genres.Select(genreId => new Genre { Id = genreId }).ToList())) // Map Genre IDs to Genre objects
+                .ForMember(dest => dest.Category, opt => opt.Ignore()); // Ignore navigation properties not present in DTO
+
+            // Map Content to ContentDTO
+            CreateMap<Content, ContentDTO>()
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name)) // Map Category name
+                .ForMember(dest => dest.Genres, opt => opt.MapFrom(src =>
+                    src.Genres.Select(genre => new GenreDTO
+                    {
+                        Id = genre.Id,
+                        Name = genre.Name
+                    }).ToList())); // Map Genre objects to GenreDTO list
             #endregion
 
         }

@@ -1,4 +1,20 @@
-# User Details
+# Project Overview
+This project was developed by me and my friends to explore the concepts of Dotnetcore WebAPI. The idea is to mimic a Netflix streaming platform.
+Beginners can use this project to understand WebAPI concepts. Additionally, we have developed a UI project based on Angular,
+available in a separate repository, which consumes this WebAPI. If you are looking to explore a full-stack web project, you can check that
+out as well. We have provided some hints to help you better understand the concepts.
+
+# About
+Framework: Microsoft.AspNetCore
+Version: .NET 8
+Data Access: Entity Framework Core (Code First Approach)
+Database: MS SQL Server
+Authentication: JWT (Identity)
+Exception Handling: Global Exception Handling using Custom Middleware (ExceptionHandlerMiddleware)
+Logging: ILogger & Serilog
+
+
+# Admin User Credentials
 admin@CodePulse.com
 Admin@123
 

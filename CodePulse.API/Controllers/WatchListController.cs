@@ -40,13 +40,6 @@ namespace CodePulse.API.Controllers
 
             // Convert Domain Model back to DTO
             var response = mapper.Map<WatchListDTO>(watchList);
-            //var response1 = new WatchListDTO
-            //{
-            //   Id = watchList.Id,
-            //   UserId = watchList.UserId,
-            //   ContentId = watchList.ContentId,
-            //};
-
             return Ok(response);
         }
 
@@ -58,7 +51,7 @@ namespace CodePulse.API.Controllers
             var watchlists = await watchListRepository.GetAllAsync(userId);
 
             //Convert Domain Model to DTO
-            //var res = mapper.Map<List<Watchlist>>(watchlists);
+           // var res = mapper.Map<List<Watchlist>>(watchlists);
             var response = new List<WatchListDTO>();
             foreach (var watchlist in watchlists)
             {
@@ -121,13 +114,6 @@ namespace CodePulse.API.Controllers
 
             // Convert Domain model to DTO
             var response = mapper.Map<WatchListDTO>(deletedContent);
-            //var response1 = new WatchListDTO
-            //{
-            //    Id=deletedContent.Id,
-            //    UserId=deletedContent.UserId,
-            //    ContentId = deletedContent.ContentId
-            //};
-
             return Ok(response);
         }
 

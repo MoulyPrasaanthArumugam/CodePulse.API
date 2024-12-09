@@ -1,4 +1,5 @@
-﻿using CodePulse.API.Model.Domain;
+﻿using AutoMapper;
+using CodePulse.API.Model.Domain;
 using CodePulse.API.Model.DTO;
 using CodePulse.API.Repositories.Implementations;
 using CodePulse.API.Repositories.Interfaces;
@@ -18,12 +19,15 @@ namespace CodePulse.API.Controllers
         private readonly IContentRepository contentRepository;
         private readonly IGenreRepository genreRepository;
         private readonly ILogger<ContentController> logger;
+        private readonly IMapper mapper;
 
-        public ContentController(IContentRepository contentRepository, IGenreRepository genreRepository, ILogger<ContentController> logger)
+        public ContentController(IContentRepository contentRepository, IGenreRepository genreRepository, 
+            ILogger<ContentController> logger, IMapper mapper)
         {
             this.contentRepository = contentRepository;
             this.genreRepository = genreRepository;
             this.logger = logger;
+            this.mapper = mapper;
 
             //Testing Log Levels
             logger.LogTrace("Trace Log");
@@ -39,11 +43,10 @@ namespace CodePulse.API.Controllers
         //[Authorize(Roles = "Writer")]
         public async Task<IActionResult> CreateContent([FromBody] CreateContentDTO request)
         {
-            //_logger.LogInformation("Initiating Content Creation");
 
-            try
-            {
+
                 // Convert DTO to DOmain
+                // var content = mapper.Map<Content>(request);
                 var content = new Content
                 {
                     Title = request.Title,
@@ -72,7 +75,6 @@ namespace CodePulse.API.Controllers
 
                 content = await contentRepository.CreateAsync(content);
 
-                //_logger.LogInformation($"Created content: {content}");
                 // Convert Domain Model back to DTO
                 var response = new ContentDTO
                 {
@@ -97,12 +99,7 @@ namespace CodePulse.API.Controllers
                 };
 
                 return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                //_logger.LogError(ex, "An error occurred while retrieving top content at {Time}", DateTime.UtcNow);
-                return StatusCode(500, "Internal Server Error");
-            }
+            
             
         }
 
@@ -153,7 +150,7 @@ namespace CodePulse.API.Controllers
             var contents = await contentRepository.GetAllAsync();
 
             //Convert Domain Model to DTO
-
+            // var response = mapper.Map<ContentDTO>(contents);
             var response = new List<ContentDTO>();
             foreach (var content in contents)
             {
