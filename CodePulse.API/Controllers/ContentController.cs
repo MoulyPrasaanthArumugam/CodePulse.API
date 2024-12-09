@@ -1,4 +1,5 @@
-﻿using CodePulse.API.Model.Domain;
+﻿using AutoMapper;
+using CodePulse.API.Model.Domain;
 using CodePulse.API.Model.DTO;
 using CodePulse.API.Repositories.Implementations;
 using CodePulse.API.Repositories.Interfaces;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace CodePulse.API.Controllers
 {
@@ -16,13 +18,24 @@ namespace CodePulse.API.Controllers
     {
         private readonly IContentRepository contentRepository;
         private readonly IGenreRepository genreRepository;
-        private readonly ILogger _logger;
+        private readonly ILogger<ContentController> logger;
+        private readonly IMapper mapper;
 
-        public ContentController(IContentRepository contentRepository, IGenreRepository genreRepository, ILogger logger)
+        public ContentController(IContentRepository contentRepository, IGenreRepository genreRepository, 
+            ILogger<ContentController> logger, IMapper mapper)
         {
             this.contentRepository = contentRepository;
             this.genreRepository = genreRepository;
-            _logger = logger;
+            this.logger = logger;
+            this.mapper = mapper;
+
+            //Testing Log Levels
+            logger.LogTrace("Trace Log");
+            logger.LogDebug("Debug Log");
+            logger.LogInformation("Info Log");
+            logger.LogWarning("Warning Log");
+            logger.LogError("Error Log");
+            logger.LogCritical("Critical Log");
         }
 
         // POST: {apibaseurl}/api/blogposts
@@ -30,11 +43,10 @@ namespace CodePulse.API.Controllers
         //[Authorize(Roles = "Writer")]
         public async Task<IActionResult> CreateContent([FromBody] CreateContentDTO request)
         {
-            _logger.LogInformation("Converting DTO to Main");
 
-            try
-            {
+
                 // Convert DTO to DOmain
+                // var content = mapper.Map<Content>(request);
                 var content = new Content
                 {
                     Title = request.Title,
@@ -78,7 +90,7 @@ namespace CodePulse.API.Controllers
                     LikeCount = content.LikeCount,
                     DislikeCount = content.DislikeCount,
                     CategoryId = content.CategoryId,
-                    CategoryName = content.Category.Name,
+                   // CategoryName = content.Category.Name,
                     Genres = content.Genres.Select(x => new GenreDTO
                     {
                         Id = x.Id,
@@ -87,12 +99,7 @@ namespace CodePulse.API.Controllers
                 };
 
                 return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while retrieving top content at {Time}", DateTime.UtcNow);
-                return StatusCode(500, "Internal Server Error");
-            }
+            
             
         }
 
@@ -137,11 +144,13 @@ namespace CodePulse.API.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetAllContents()
-        {
+        {       
+            //throw new Exception("This is a custom Error for Testing");
+
             var contents = await contentRepository.GetAllAsync();
 
             //Convert Domain Model to DTO
-
+            // var response = mapper.Map<ContentDTO>(contents);
             var response = new List<ContentDTO>();
             foreach (var content in contents)
             {

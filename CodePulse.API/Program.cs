@@ -9,8 +9,23 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.Logging;
+using Serilog;
+using CodePulse.API.Middlewares;
+using AutoMapper;
+using CodePulse.API.Mappings;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//Add Serilog for Logging 
+var logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day) //Logging to File with Day Interval
+    .MinimumLevel.Information()
+    .CreateLogger();
+
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
+
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
@@ -63,6 +78,9 @@ builder.Services.AddScoped<IImageRepository,ImageRepository>();
 builder.Services.AddScoped<IGenreRepository, GenreRepository>();
 builder.Services.AddScoped<IWatchListRepository, WatchListRepository>();
 builder.Services.AddScoped<ITokenRepository,TokenRepository>();
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+
 
 //Configuring what kind of User and roles to use
 builder.Services.AddIdentityCore<IdentityUser>()
@@ -108,6 +126,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ExceptionHandlerMiddleware>();  //Registering Custom Middleware to Pipeline.
 
 app.UseHttpsRedirection();
 app.UseCors(options =>
