@@ -39,6 +39,8 @@ namespace CodePulse.API.Controllers
         //[Authorize(Roles = "Writer")]
         public async Task<IActionResult> SaveCategory(CreateCategoryDTO request)
         {
+            string serializedRequest = JsonSerializer.Serialize(request);
+            logger.LogInformation($"Insert Category: {serializedRequest}");
             //Map DTO to Domain Model 
             var category = new Category()
             {
@@ -53,6 +55,11 @@ namespace CodePulse.API.Controllers
                 Id = category.Id,
                 Name = request.Name
             };
+
+            string InsertDESerializedCategory = JsonSerializer.Serialize(response);
+
+            logger.LogInformation($"Inserted Category:{InsertDESerializedCategory}");
+
             return Ok(response);
         }
 
@@ -61,6 +68,7 @@ namespace CodePulse.API.Controllers
         {
             logger.LogInformation("Get All Category  Action Method Started");
 
+            //throw new Exception("This denotes error");
             var categories = await categoryRepository.GetAllCategoriesAsynch();
 
             //Serialize the Object to JSON for Logging
@@ -80,6 +88,10 @@ namespace CodePulse.API.Controllers
                 });
             }
 
+
+            string GetAllCategory = JsonSerializer.Serialize(response);
+
+            logger.LogInformation($"Get All Category:{GetAllCategory}");
             //var response = mapper.Map<List<CategoryDTO>>(categories);
             return Ok(response);
         }
@@ -110,6 +122,8 @@ namespace CodePulse.API.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> GetCategoryByID([FromRoute] Guid id)
         {
+            
+            logger.LogInformation("Get Category ById");
             var category = await categoryRepository.GetCategoryByID(id);
 
             if (category is null)
@@ -121,6 +135,10 @@ namespace CodePulse.API.Controllers
                 Id = category.Id,
                 Name = category.Name
             };
+
+            string GetAllCategories = JsonSerializer.Serialize(response);
+
+            logger.LogInformation($"Get Category ByID:{GetAllCategories}");
             return Ok(response);
         }
 
@@ -129,6 +147,13 @@ namespace CodePulse.API.Controllers
         //[Authorize(Roles = "Writer")]
         public async Task<IActionResult> EditCategory([FromRoute] Guid id, UpdateCategoryDTO request)
         {
+            logger.LogInformation("Update Category:");
+
+            string serializedreqbyId = JsonSerializer.Serialize(id);
+            string serializedreq = JsonSerializer.Serialize(request);
+
+            logger.LogInformation($"Caregories:{serializedreq},{serializedreqbyId}");
+            
             var catrgory = new Category()
             {
                 Id = id,
@@ -147,6 +172,10 @@ namespace CodePulse.API.Controllers
                 Id = catrgory.Id,
                 Name = catrgory.Name
             };
+
+            string UpdateCategories = JsonSerializer.Serialize(response);
+
+            logger.LogInformation($"Updated Categories:{UpdateCategories}");
             return Ok(response);
         }
 
@@ -155,6 +184,11 @@ namespace CodePulse.API.Controllers
         //[Authorize(Roles = "Writer")]
         public async Task<IActionResult> DeleteCategory([FromRoute] Guid id)
         {
+            string DeleteCategories = JsonSerializer.Serialize(id);
+
+            logger.LogInformation($"Delete Categories:{DeleteCategories}");
+
+
             var category = await categoryRepository.DeleteAsync(id);
             if (category is null)
             {
@@ -165,6 +199,10 @@ namespace CodePulse.API.Controllers
                 Id = category.Id,
                 Name = category.Name
             };
+
+            string DeletedCategories = JsonSerializer.Serialize(response);
+
+            logger.LogInformation($"Updated Categories:{DeletedCategories}");
             return Ok(response);
         }
 

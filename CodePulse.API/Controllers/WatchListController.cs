@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualBasic;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace CodePulse.API.Controllers
 {
@@ -14,9 +15,11 @@ namespace CodePulse.API.Controllers
     public class WatchListController : ControllerBase
     {
         private readonly IWatchListRepository watchListRepository;
-        public WatchListController(IWatchListRepository watchListRepository)
+        private readonly ILogger<WatchListController> logger;
+        public WatchListController(IWatchListRepository watchListRepository, ILogger<WatchListController> logger)
         {
             this.watchListRepository = watchListRepository;
+            this.logger = logger;
         }
 
         // POST: {apibaseurl}/api/Watchlist
@@ -24,6 +27,10 @@ namespace CodePulse.API.Controllers
         //[Authorize(Roles = "Writer")]
         public async Task<IActionResult> AddToWatchList(Guid contentId)
         {
+            string InsertWatchlist = JsonSerializer.Serialize(contentId);
+
+            logger.LogInformation($"Inserted Watchlist:{InsertWatchlist}");
+
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             var watchList = new Watchlist
@@ -42,12 +49,17 @@ namespace CodePulse.API.Controllers
                ContentId = watchList.ContentId,
             };
 
+            string InsertedWatchlist = JsonSerializer.Serialize(response);
+
+            logger.LogInformation($"Inserted Watchlist:{InsertedWatchlist}");
+
             return Ok(response);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllWatchListItems()
         {
+            logger.LogInformation("Get All Watched Items:");
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             var watchlists = await watchListRepository.GetAllAsync(userId);
@@ -90,6 +102,10 @@ namespace CodePulse.API.Controllers
                 });
 
             }
+
+            string Getwatchlist =  JsonSerializer.Serialize(response);
+
+            logger.LogInformation($"Get  Watchlist:{Getwatchlist}");
             return Ok(response);
 
         }
@@ -100,6 +116,7 @@ namespace CodePulse.API.Controllers
         //[Authorize(Roles = "Writer")]
         public async Task<IActionResult> RemoveFromWatchList( Guid contentId)
         {
+            logger.LogInformation($"Remove  Watchlist:{contentId}");
             string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (userId == null)
@@ -121,6 +138,9 @@ namespace CodePulse.API.Controllers
                 UserId=deletedContent.UserId,
                 ContentId = deletedContent.ContentId
             };
+            string Removedwatchlist = JsonSerializer.Serialize(response);
+
+            logger.LogInformation($"Get  Watchlist:{Removedwatchlist}");
 
             return Ok(response);
         }
