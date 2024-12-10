@@ -86,6 +86,20 @@ ModelState is primarily used to track and handle validation errors during model 
 invalid data types, or violations of validation attributes—are captured. By leveraging ModelState, we can provide customized and user-friendly error
 responses when errors occur during model binding or other validation scenarios.
 
+# Model Validation
+We basically evaluate the data we recieve from the client request by applying Data Annotatios in Domain Model.
+
+# Custom Action Filter
+Custom validation filters go beyond what Data Annotations can do, especially for scenarios involving complex business rules, cross-cutting concerns,
+or customized responses. Use them alongside Data Annotations to create a clean and scalable validation pipeline.
+
+*Complex business rules that cannot be expressed with annotations.
+*Validation that involves external dependencies (e.g., database lookups or API calls).
+*Custom response formatting or error codes.
+*Validation outside of model-bound inputs (e.g., query parameters, headers).
+*Validation for specific scenarios or endpoints (conditional validation).
+
+
 # Logging
 *primarily we can use default ILogger to Log but to get more flexibility we can use 3rd party like SeriLog/Log4Net
 

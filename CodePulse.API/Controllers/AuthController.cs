@@ -62,6 +62,23 @@ namespace CodePulse.API.Controllers
         [Route("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequestDto request)
         {
+            //Check if User Name or MailId already Exists
+            var existingMail= await userManager.FindByEmailAsync(request.Email);
+            var existingUserName = await userManager.FindByNameAsync(request.UserName);
+
+            if (existingMail is not null)
+            {
+                ModelState.AddModelError("","Email Id already exists");
+                return ValidationProblem(ModelState);
+            }
+
+            if (existingUserName is not null)
+            {
+                ModelState.AddModelError("", "UserName already exists");
+                return ValidationProblem(ModelState);
+
+            }
+
             // Create IdentityUser object
             var user = new IdentityUser
             {

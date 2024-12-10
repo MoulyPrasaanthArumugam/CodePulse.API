@@ -1,12 +1,13 @@
+# Add Info Logs to Controllers
 
 # Model Validation
-Need to do for All Models
+Need to do for All Models 
 
 # Avoid injecting same email id for multiple users
 
-
 # Implement Versioning in API
 Add Filter , Sorting , Pagination, searching for all the get methods in Controllers and deprecate the existing endpoint using versioning.
+Status: Developing
 
 # API Documentation
 
@@ -15,6 +16,8 @@ Add Filter , Sorting , Pagination, searching for all the get methods in Controll
 2)ContentController - All Methods
 
 # Implement Condition Based Dependency Injection
+
+# Implement Custom Filters
 
 #Include Design Patterns
 

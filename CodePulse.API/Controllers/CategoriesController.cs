@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Drawing.Printing;
 using AutoMapper;
 using System.Text.Json;
+using CodePulse.API.CustomActionFilters;
 
 
 namespace CodePulse.API.Controllers
