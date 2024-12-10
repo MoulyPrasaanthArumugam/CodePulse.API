@@ -44,6 +44,11 @@ namespace CodePulse.API.Controllers
         public async Task<IActionResult> CreateContent([FromBody] CreateContentDTO request)
         {
 
+            logger.LogInformation("Initiating Content Creation");
+            string InsertContent = JsonSerializer.Serialize(request);
+
+            logger.LogInformation($"Inserted Watchlist:{InsertContent}");
+
 
                 // Convert DTO to DOmain
                 // var content = mapper.Map<Content>(request);
@@ -98,6 +103,9 @@ namespace CodePulse.API.Controllers
                     }).ToList()
                 };
 
+                string InsertedContent = JsonSerializer.Serialize(request);
+
+                logger.LogInformation($"Inserted Contents:{InsertedContent}");
                 return Ok(response);
             
             
@@ -109,6 +117,9 @@ namespace CodePulse.API.Controllers
         //[Authorize(Roles = "Writer")]
         public async Task<IActionResult> AddLike(Guid contentId)
         {
+            logger.LogInformation("Add like : ");
+            string Addslike = JsonSerializer.Serialize(contentId);
+            logger.LogInformation($"Add like :{Addslike} ");
             string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             
             var content = new Like
@@ -117,7 +128,10 @@ namespace CodePulse.API.Controllers
                ContentId = contentId,
             };
 
-             await contentRepository.AddLikeAsync(content);            
+             await contentRepository.AddLikeAsync(content);
+
+            string Addedlike = JsonSerializer.Serialize(content);
+            logger.LogInformation($"Added like :{Addedlike} ");
 
             return Ok("Liked");
         }
@@ -128,6 +142,8 @@ namespace CodePulse.API.Controllers
         //[Authorize(Roles = "Writer")]
         public async Task<IActionResult> AddDisLike(Guid contentId)
         {
+            string AddDisLike = JsonSerializer.Serialize(contentId);
+            logger.LogInformation($"Add dislike :{AddDisLike} ");
             string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             // Convert DTO to DOmain
@@ -139,12 +155,17 @@ namespace CodePulse.API.Controllers
 
             await contentRepository.AddDisLikeAsync(content);
 
+            string AddedDisLike = JsonSerializer.Serialize(content);
+            logger.LogInformation($"Add dislike :{AddedDisLike} ");
             return Ok("DisLiked");
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllContents()
-        {       
+        {
+            logger.LogInformation($"GetAllContent: : ");
+            //string AddDisLike = JsonSerializer.Serialize(contentId);
+            //logger.LogInformation($"Add dislike :{AddDisLike} ");
             //throw new Exception("This is a custom Error for Testing");
 
             var contents = await contentRepository.GetAllAsync();
@@ -178,6 +199,8 @@ namespace CodePulse.API.Controllers
                 });
 
             }
+            string  GetByAllcontent= JsonSerializer.Serialize(response);
+            logger.LogInformation($"Add dislike :{GetByAllcontent} ");
             return Ok(response);
 
         }
