@@ -129,7 +129,7 @@ namespace CodePulse.API.Controllers
         //[Authorize(Roles = "Writer")]
         public async Task<IActionResult> EditCategory([FromRoute] Guid id, UpdateCategoryDTO request)
         {
-            var category = new Category()
+            var category = new Category();
             logger.LogInformation("Update Category:");
 
             string serializedreqbyId = JsonSerializer.Serialize(id);
