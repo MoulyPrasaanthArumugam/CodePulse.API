@@ -1,4 +1,5 @@
-﻿using CodePulse.API.Model.Domain;
+﻿using AutoMapper;
+using CodePulse.API.Model.Domain;
 using CodePulse.API.Model.DTO;
 using CodePulse.API.Repositories.Implementations;
 using CodePulse.API.Repositories.Interfaces;
@@ -13,12 +14,14 @@ namespace CodePulse.API.Controllers
     public class GenreController : ControllerBase
     {
         private readonly IGenreRepository _genreRepository;
+        private readonly IMapper mapper;
         private readonly ILogger<GenreController> logger;
 
-        public GenreController(IGenreRepository genreRepository,ILogger<GenreController> logger) 
+        public GenreController(IGenreRepository genreRepository, IMapper mapper, ILogger<GenreController> logger) 
         { 
            _genreRepository = genreRepository;
             this.logger = logger;
+            this.mapper = mapper;
         }
 
 
@@ -28,11 +31,11 @@ namespace CodePulse.API.Controllers
         //[Authorize(Roles = "Writer")]
         public async Task<IActionResult> SaveGenre(CreateGenreDTO request)
         {
+            //Map DTO to Domain Model 
             string serializedRequest = JsonSerializer.Serialize(request);
 
             logger.LogInformation($"InsertGenre:{serializedRequest}");
-            //logger.LogInformation($"Genre:");
-            //Map DTO to Domain Model 
+
             var genre = new Genre()
             {
                 Name = request.Name
@@ -48,12 +51,6 @@ namespace CodePulse.API.Controllers
                 Id = genre.Id,
                 Name = request.Name
             };
-           
-
-            string SerializedGenre = JsonSerializer.Serialize(response);
-
-            logger.LogInformation($"Inserted Genre:{SerializedGenre}");
-
             return Ok(response);
         }
 
@@ -62,20 +59,8 @@ namespace CodePulse.API.Controllers
         {
             logger.LogInformation($"Get All Genre:");
             var genres = await _genreRepository.GetAllAsync();
-
-            var response = new List<GenreDTO>();
-            //Map Domain Model to DTO
-            foreach (var genre in genres)
-            {
-                response.Add(new GenreDTO
-                {
-                    Id = genre.Id,
-                    Name = genre.Name
-                });
-            }
-
+            var response = mapper.Map<List<GenreDTO>>(genres);
             
-
             string dataretrivalGenre = JsonSerializer.Serialize(response);
 
             logger.LogInformation($"data Retrival Genre:{dataretrivalGenre}");
@@ -94,16 +79,11 @@ namespace CodePulse.API.Controllers
             {
                 return NotFound();
             }
-            var response = new CategoryDTO()
-            {
-                Id = genre.Id,
-                Name = genre.Name
-            };
-            
+            var response = mapper.Map<GenreDTO>(genre);
+
             string DatabyIDGenre = JsonSerializer.Serialize(response);
 
             logger.LogInformation($"data Retrival byID Genre:{DatabyIDGenre}");
-
             return Ok(response);
         }
 
@@ -131,17 +111,10 @@ namespace CodePulse.API.Controllers
             }
             //Converting Domain Model to DTO
 
-            var response = new GenreDTO()
-            {
-                Id = genre.Id,
-                Name = genre.Name
-            };
-            
-
+            var response = mapper.Map<GenreDTO>(genre);
             string UpdatedGenre = JsonSerializer.Serialize(response);
 
             logger.LogInformation($"Updated Genre:{UpdatedGenre}");
-
             return Ok(response);
         }
 
@@ -157,17 +130,10 @@ namespace CodePulse.API.Controllers
             {
                 return NotFound();
             }
-            var response = new GenreDTO()
-            {
-                Id = genre.Id,
-                Name = genre.Name
-            };
-            
-
+            var response = mapper.Map<GenreDTO>(genre);
             string DeletedGenre = JsonSerializer.Serialize(response);
 
             logger.LogInformation($"Updated Genre:{DeletedGenre}");
-
             return Ok(response);
         }
 

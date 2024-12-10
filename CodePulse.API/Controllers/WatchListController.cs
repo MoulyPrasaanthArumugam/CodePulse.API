@@ -1,4 +1,5 @@
-﻿using CodePulse.API.Model.Domain;
+﻿using AutoMapper;
+using CodePulse.API.Model.Domain;
 using CodePulse.API.Model.DTO;
 using CodePulse.API.Repositories.Implementations;
 using CodePulse.API.Repositories.Interfaces;
@@ -15,11 +16,16 @@ namespace CodePulse.API.Controllers
     public class WatchListController : ControllerBase
     {
         private readonly IWatchListRepository watchListRepository;
+        private readonly IMapper mapper;
         private readonly ILogger<WatchListController> logger;
-        public WatchListController(IWatchListRepository watchListRepository, ILogger<WatchListController> logger)
+
+        public WatchListController(IWatchListRepository watchListRepository, IMapper mapper
+            )
         {
             this.watchListRepository = watchListRepository;
+            this.mapper = mapper;
             this.logger = logger;
+
         }
 
         // POST: {apibaseurl}/api/Watchlist
@@ -42,17 +48,10 @@ namespace CodePulse.API.Controllers
            watchList = await watchListRepository.CreateAsync(watchList);
 
             // Convert Domain Model back to DTO
-            var response = new WatchListDTO
-            {
-               Id = watchList.Id,
-               UserId = watchList.UserId,
-               ContentId = watchList.ContentId,
-            };
-
+            var response = mapper.Map<WatchListDTO>(watchList);
             string InsertedWatchlist = JsonSerializer.Serialize(response);
 
             logger.LogInformation($"Inserted Watchlist:{InsertedWatchlist}");
-
             return Ok(response);
         }
 
@@ -65,7 +64,7 @@ namespace CodePulse.API.Controllers
             var watchlists = await watchListRepository.GetAllAsync(userId);
 
             //Convert Domain Model to DTO
-
+           // var res = mapper.Map<List<Watchlist>>(watchlists);
             var response = new List<WatchListDTO>();
             foreach (var watchlist in watchlists)
             {
@@ -132,16 +131,10 @@ namespace CodePulse.API.Controllers
             }
 
             // Convert Domain model to DTO
-            var response = new WatchListDTO
-            {
-                Id=deletedContent.Id,
-                UserId=deletedContent.UserId,
-                ContentId = deletedContent.ContentId
-            };
+            var response = mapper.Map<WatchListDTO>(deletedContent);
             string Removedwatchlist = JsonSerializer.Serialize(response);
 
             logger.LogInformation($"Get  Watchlist:{Removedwatchlist}");
-
             return Ok(response);
         }
 

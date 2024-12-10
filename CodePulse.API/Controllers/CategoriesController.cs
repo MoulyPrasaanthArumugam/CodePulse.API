@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Drawing.Printing;
 using AutoMapper;
 using System.Text.Json;
+using CodePulse.API.CustomActionFilters;
 
 
 namespace CodePulse.API.Controllers
@@ -42,19 +43,14 @@ namespace CodePulse.API.Controllers
             string serializedRequest = JsonSerializer.Serialize(request);
             logger.LogInformation($"Insert Category: {serializedRequest}");
             //Map DTO to Domain Model 
-            var category = new Category()
-            {
-                Name = request.Name
-            };
+            var category = mapper.Map<Category>(request);
 
             await categoryRepository.CreateCategoryAsynch(category);
 
             //Map Domain Model to DTO
-            var response = new CategoryDTO()
-            {
-                Id = category.Id,
-                Name = request.Name
-            };
+            var response = mapper.Map<CategoryDTO>(category);
+
+           
 
             string InsertDESerializedCategory = JsonSerializer.Serialize(response);
 
@@ -77,22 +73,11 @@ namespace CodePulse.API.Controllers
             logger.LogInformation($"Caregories:{serializedCategories}");
 
             //Map Domain Model to DTO
-            var response = new List<CategoryDTO>();
-
-            foreach (var category in categories)
-            {
-                response.Add(new CategoryDTO
-                {
-                    Id = category.Id,
-                    Name = category.Name
-                });
-            }
-
-
+            var response = mapper.Map<List<CategoryDTO>>(categories);
+            
             string GetAllCategory = JsonSerializer.Serialize(response);
 
             logger.LogInformation($"Get All Category:{GetAllCategory}");
-            //var response = mapper.Map<List<CategoryDTO>>(categories);
             return Ok(response);
         }
 
@@ -130,15 +115,12 @@ namespace CodePulse.API.Controllers
             {
                 return NotFound();
             }
-            var response = new CategoryDTO()
-            {
-                Id = category.Id,
-                Name = category.Name
-            };
-
+            //Converting Domain model to DTO
+            var response = mapper.Map<CategoryDTO>(category);
             string GetAllCategories = JsonSerializer.Serialize(response);
 
             logger.LogInformation($"Get Category ByID:{GetAllCategories}");
+
             return Ok(response);
         }
 
@@ -147,6 +129,7 @@ namespace CodePulse.API.Controllers
         //[Authorize(Roles = "Writer")]
         public async Task<IActionResult> EditCategory([FromRoute] Guid id, UpdateCategoryDTO request)
         {
+            var category = new Category()
             logger.LogInformation("Update Category:");
 
             string serializedreqbyId = JsonSerializer.Serialize(id);
@@ -159,19 +142,16 @@ namespace CodePulse.API.Controllers
                 Id = id,
                 Name = request.Name
             };
-            catrgory = await categoryRepository.UpdateAsynch(catrgory);
+            category = await categoryRepository.UpdateAsynch(category);
 
-            if (catrgory is null)
+            if (category is null)
             {
                 return NotFound();
             }
             //Converting Domain Model to DTO
-
-            var response = new CategoryDTO()
-            {
-                Id = catrgory.Id,
-                Name = catrgory.Name
-            };
+           
+           
+            var response = mapper.Map<CategoryDTO>(category);
 
             string UpdateCategories = JsonSerializer.Serialize(response);
 
@@ -194,12 +174,10 @@ namespace CodePulse.API.Controllers
             {
                 return NotFound();
             }
-            var response = new CategoryDTO()
-            {
-                Id = category.Id,
-                Name = category.Name
-            };
-
+            //Converting Domain Model to DTO
+            
+            
+            var response = mapper.Map<CategoryDTO>(category);
             string DeletedCategories = JsonSerializer.Serialize(response);
 
             logger.LogInformation($"Updated Categories:{DeletedCategories}");

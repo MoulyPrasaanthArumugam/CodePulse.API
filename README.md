@@ -1,4 +1,20 @@
-# User Details
+# Project Overview
+This project was developed by me and my friends to explore the concepts of Dotnetcore WebAPI. The idea is to mimic a Netflix streaming platform.
+Beginners can use this project to understand WebAPI concepts. Additionally, we have developed a UI project based on Angular,
+available in a separate repository, which consumes this WebAPI. If you are looking to explore a full-stack web project, you can check that
+out as well. We have provided some hints to help you better understand the concepts.
+
+# About
+Framework: Microsoft.AspNetCore
+Version: .NET 8
+Data Access: Entity Framework Core (Code First Approach)
+Database: MS SQL Server
+Authentication: JWT (Identity)
+Exception Handling: Global Exception Handling using Custom Middleware (ExceptionHandlerMiddleware)
+Logging: ILogger & Serilog
+
+
+# Admin User Credentials
 admin@CodePulse.com
 Admin@123
 
@@ -69,6 +85,20 @@ ON DELETE CASCADE;
 ModelState is primarily used to track and handle validation errors during model binding. It ensures that any issues—such as missing required fields,
 invalid data types, or violations of validation attributes—are captured. By leveraging ModelState, we can provide customized and user-friendly error
 responses when errors occur during model binding or other validation scenarios.
+
+# Model Validation
+We basically evaluate the data we recieve from the client request by applying Data Annotatios in Domain Model.
+
+# Custom Action Filter
+Custom validation filters go beyond what Data Annotations can do, especially for scenarios involving complex business rules, cross-cutting concerns,
+or customized responses. Use them alongside Data Annotations to create a clean and scalable validation pipeline.
+
+*Complex business rules that cannot be expressed with annotations.
+*Validation that involves external dependencies (e.g., database lookups or API calls).
+*Custom response formatting or error codes.
+*Validation outside of model-bound inputs (e.g., query parameters, headers).
+*Validation for specific scenarios or endpoints (conditional validation).
+
 
 # Logging
 *primarily we can use default ILogger to Log but to get more flexibility we can use 3rd party like SeriLog/Log4Net
