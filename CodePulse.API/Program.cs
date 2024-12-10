@@ -13,6 +13,9 @@ using Serilog;
 using CodePulse.API.Middlewares;
 using AutoMapper;
 using CodePulse.API.Mappings;
+using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
+using CodePulse.API;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +32,19 @@ builder.Logging.AddSerilog(logger);
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
+//Adding API Versioning
+builder.Services.AddApiVersioning( Options =>
+{
+    Options.AssumeDefaultVersionWhenUnspecified = true;
+    Options.DefaultApiVersion = new ApiVersion(1,0);
+    Options.ReportApiVersions = true;
+})
+.AddApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'VVV";
+    options.SubstituteApiVersionInUrl = true;
+});
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -59,6 +75,8 @@ builder.Services.AddSwaggerGen(Options=>
         }
     });
 });
+//Setting Swagger API Versioning Options
+builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 
 //Handled ApplicationDBContext and AuthDBContext seperately
 builder.Services.AddDbContext<ApplicationDBContext>(Options =>
@@ -120,11 +138,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 var app = builder.Build();
 
+var versionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI( options =>
+    {
+        foreach(var description in versionDescriptionProvider.ApiVersionDescriptions)
+        {
+            options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
+        }
+    });
 }
 
 app.UseMiddleware<ExceptionHandlerMiddleware>();  //Registering Custom Middleware to Pipeline.

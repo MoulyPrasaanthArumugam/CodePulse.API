@@ -14,12 +14,16 @@ using System.Drawing.Printing;
 using AutoMapper;
 using System.Text.Json;
 using CodePulse.API.CustomActionFilters;
+using Asp.Versioning;
 
 
 namespace CodePulse.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiversion}/[controller]")]
     [ApiController]
+    //Creating API Version
+    [ApiVersion(1.0)]
+    [ApiVersion(2.0)]
     public class CategoriesController : ControllerBase
     {
         private readonly ICategoryRepository categoryRepository;
@@ -60,6 +64,7 @@ namespace CodePulse.API.Controllers
         }
 
         [HttpGet]
+        [MapToApiVersion(1.0)]
         public async Task<IActionResult> GetAllCategoryAsynch()
         {
             logger.LogInformation("Get All Category  Action Method Started");
@@ -81,27 +86,18 @@ namespace CodePulse.API.Controllers
             return Ok(response);
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetAllCategoryAsynch([FromQuery] string? query,
-        //    [FromQuery] string? sortBy,
-        //    [FromQuery] string? sortDirection, [FromQuery] int? pageNumber,
-        //    [FromQuery] int? pageSize)
-        //{
-        //    var categories = await categoryRepository.GetAllCategoriesAsynch(query,sortBy,sortDirection, pageNumber, pageSize);
+        [HttpGet]
+        [MapToApiVersion(2.0)]
 
-        //    var response = new List<CategoryDTO>();
-        //    //Map Domain Model to DTO
-        //    foreach (var category in categories)
-        //    {
-        //        response.Add(new CategoryDTO
-        //        {
-        //            Id = category.Id,
-        //            Name = category.Name,
-        //            UrlHandle = category.UrlHandle
-        //        });
-        //    }
-        //    return Ok(response);
-        //}
+        public async Task<IActionResult> GetAllCategoryAsynch([FromQuery] string? query,
+            [FromQuery] string? sortBy,
+            [FromQuery] string? sortDirection, [FromQuery] int? pageNumber,
+            [FromQuery] int? pageSize)
+        {
+            var categories = await categoryRepository.GetAllCategoriesAsynch(query, sortBy, sortDirection, pageNumber, pageSize);
+            var response = mapper.Map<List<CategoryDTO>>(categories);
+            return Ok(response);
+        }
 
         [HttpGet]
         [Route("{id:Guid}")]

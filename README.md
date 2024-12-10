@@ -134,3 +134,9 @@ and to Avoid Repetition like wrapping every action method within try catch block
 Here we have configured Custom Middleware Named "ExceptionHandlerMiddleware" to handle Internal server errors.
 
 
+# versioning
+We can use Versioning to manage multiple APIs, It provides Backward Compatablity which don't break existing consumers flow.
+
+we used "Asp.Versioning.Mvc" for versioning since "Microsoft.AspNetCore.Mvc.Versioning"  is deprecated.
+we used "Asp.Versioning.Mvc.ApiExplorer" for versioning since "Microsoft.AspNetCore.Mvc.Versioning.ApiExplore"  is deprecated.
+
